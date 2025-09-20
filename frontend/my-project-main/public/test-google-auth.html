@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار Google OAuth</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        .description {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-right: 4px solid #4285f4;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        #g_id_signin {
+            margin: 20px 0;
+        }
+        .note {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 اختبار Google OAuth</h1>
+        
+        <div class="description">
+            هذا اختبار للتأكد من أن Google OAuth يعمل بالطريقة المطلوبة:
+        </div>
+        
+        <div class="step">
+            <strong>الخطوة 1:</strong> اضغط على زر Google
+        </div>
+        
+        <div class="step">
+            <strong>الخطوة 2:</strong> اختر الحساب Google المطلوب
+        </div>
+        
+        <div class="step">
+            <strong>الخطوة 3:</strong> تسجيل دخول تلقائي بدون كلمة مرور!
+        </div>
+        
+        <!-- Google Sign-In Button -->
+        <div id="g_id_onload"
+             data-client_id="330391874170-uoe6pqggv4jp6jhlq73omdeg56fi3l1e.apps.googleusercontent.com"
+             data-callback="handleCredentialResponse"
+             data-auto_prompt="false">
+        </div>
+        
+        <div class="g_id_signin" 
+             data-type="standard"
+             data-size="large"
+             data-theme="outline"
+             data-text="signin_with"
+             data-shape="rectangular"
+             data-logo_alignment="left"
+             data-width="300">
+        </div>
+        
+        <div id="result" class="result"></div>
+        
+        <div class="note">
+            <strong>ملاحظة:</strong> هذا مثال مبسط لاختبار Google OAuth. 
+            في التطبيق الحقيقي، ستدخل مباشرة للموقع بعد اختيار الحساب.
+        </div>
+    </div>
+
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <script>
+        function handleCredentialResponse(response) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            
+            if (response.credential) {
+                // فك تشفير JWT للحصول على معلومات المستخدم (لأغراض العرض فقط)
+                const payload = JSON.parse(atob(response.credential.split('.')[1]));
+                
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `
+                    <h3>🎉 نجح تسجيل الدخول!</h3>
+                    <p><strong>مرحباً:</strong> ${payload.name}</p>
+                    <p><strong>الإيميل:</strong> ${payload.email}</p>
+                    <p><strong>الصورة:</strong> <img src="${payload.picture}" style="width: 50px; height: 50px; border-radius: 50%; vertical-align: middle;"></p>
+                    <p style="font-size: 0.9rem; color: #666; margin-top: 15px;">
+                        الآن سيتم إرسال هذه البيانات إلى الخادم لإنشاء جلسة المستخدم
+                    </p>
+                `;
+                
+                // في التطبيق الحقيقي، سيتم إرسال response.credential إلى Backend
+                console.log('Google Credential:', response.credential);
+                
+            } else {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = '<h3>❌ فشل تسجيل الدخول</h3><p>لم يتم الحصول على بيانات الاعتماد</p>';
+            }
+        }
+        
+        // عرض رسالة تحميل
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                if (!window.google) {
+                    const resultDiv = document.getElementById('result');
+                    resultDiv.style.display = 'block';
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = '<h3>⚠️ خطأ في التحميل</h3><p>تعذر تحميل Google Identity Services</p>';
+                }
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

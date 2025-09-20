@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار Google OAuth - Frontend</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .test-title {
+            font-weight: bold;
+            color: #4285f4;
+            margin-bottom: 15px;
+        }
+        button {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #357ae8;
+            transform: translateY(-2px);
+        }
+        .google-btn {
+            background: white;
+            color: #333;
+            border: 1px solid #dadce0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            width: 100%;
+        }
+        .google-btn:hover {
+            background: #f8f9fa;
+            transform: translateY(-1px);
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #cce7ff;
+            color: #004085;
+            border: 1px solid #abd1ff;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 8px;
+        }
+        .status-ok { background: #28a745; }
+        .status-error { background: #dc3545; }
+        .status-unknown { background: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 اختبار Google OAuth Integration</h1>
+        
+        <div class="test-section">
+            <div class="test-title">
+                📋 فحص التكوين
+                <span id="config-status" class="status-indicator status-unknown"></span>
+            </div>
+            <p>التحقق من وجود Google Client ID في متغيرات البيئة</p>
+            <button onclick="checkConfiguration()">فحص التكوين</button>
+            <div id="config-result" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">
+                🌐 اختبار Backend API
+                <span id="backend-status" class="status-indicator status-unknown"></span>
+            </div>
+            <p>اختبار اتصال Backend وتوجيه Google OAuth</p>
+            <button onclick="testBackendAPI()">اختبار Backend</button>
+            <div id="backend-result" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">
+                🔐 اختبار Google Sign-In
+                <span id="google-status" class="status-indicator status-unknown"></span>
+            </div>
+            <p>اختبار تسجيل الدخول بـ Google باستخدام JavaScript SDK</p>
+            
+            <!-- زر تسجيل الدخول بـ Google التقليدي -->
+            <button onclick="redirectToGoogle()" class="google-btn">
+                <svg width="20" height="20" viewBox="0 0 533.5 544.3">
+                    <path fill="#4285F4" d="M533.5 278.4c0-17.6-1.4-35.2-4.3-52H272v98.9h146.9c-6.4 34.5-25.5 63.8-54.6 83.3v68h88.3c51.8-47.7 81.9-118.2 81.9-198.2z"/>
+                    <path fill="#34A853" d="M272 544.3c73.7 0 135.5-24.3 180.7-66.1l-88.3-68c-24.5 16.5-55.7 26.3-92.4 26.3-71 0-131-47.8-152.5-112.1H31.6v70.5C76.8 491.2 167.6 544.3 272 544.3z"/>
+                    <path fill="#FBBC05" d="M119.5 325.4c-7.2-21.4-11.3-44.1-11.3-67.4s4.1-46 11.3-67.4V120H31.6C11.3 166.5 0 218.7 0 278s11.3 111.5 31.6 158l87.9-70.6z"/>
+                    <path fill="#EA4335" d="M272 109.7c38.4 0 72.7 13.2 99.9 39.1l74.9-74.9C407.3 24.3 345.5 0 272 0 167.6 0 76.8 53.1 31.6 145.7l87.9 70.5c21.5-64.3 81.5-112 152.5-112z"/>
+                </svg>
+                تسجيل الدخول بـ Google (Redirect)
+            </button>
+            
+            <!-- منطقة لزر Google Identity Services -->
+            <div id="g_id_onload"
+                 data-client_id=""
+                 data-callback="handleCredentialResponse"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin" 
+                 data-type="standard"
+                 data-size="large"
+                 data-theme="outline"
+                 data-text="sign_in_with"
+                 data-shape="rectangular"
+                 data-logo_alignment="left"
+                 data-width="300">
+            </div>
+            
+            <div id="google-result" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">📊 نتائج الاختبار</div>
+            <div id="test-summary"></div>
+        </div>
+    </div>
+
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <script>
+        // متغيرات التكوين
+        const API_URL = 'http://127.0.0.1:8000';
+        const GOOGLE_CLIENT_ID = ''; // سيتم تحديدها تلقائياً
+        
+        let testResults = {
+            config: null,
+            backend: null,
+            google: null
+        };
+
+        // فحص التكوين
+        function checkConfiguration() {
+            const resultDiv = document.getElementById('config-result');
+            const statusDiv = document.getElementById('config-status');
+            resultDiv.style.display = 'block';
+            
+            // البحث عن Google Client ID في HTML
+            const onloadDiv = document.getElementById('g_id_onload');
+            const clientId = onloadDiv.dataset.client_id;
+            
+            if (!clientId || clientId === '') {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ Google Client ID غير مُعد\n\nيرجى إضافة GOOGLE_CLIENT_ID في متغيرات البيئة';
+                statusDiv.className = 'status-indicator status-error';
+                testResults.config = false;
+            } else {
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `✅ Google Client ID مُعد بشكل صحيح\nClient ID: ${clientId.substring(0, 20)}...`;
+                statusDiv.className = 'status-indicator status-ok';
+                testResults.config = true;
+                
+                // تحديث معرف العميل في العناصر
+                onloadDiv.dataset.client_id = clientId;
+            }
+            
+            updateTestSummary();
+        }
+
+        // اختبار Backend API
+        async function testBackendAPI() {
+            const resultDiv = document.getElementById('backend-result');
+            const statusDiv = document.getElementById('backend-status');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '🔄 جاري اختبار Backend...';
+            
+            try {
+                // اختبار حالة الخادم
+                const response = await fetch(`${API_URL}/api/auth/google`, {
+                    method: 'GET',
+                    redirect: 'manual'
+                });
+                
+                if (response.type === 'opaqueredirect' || response.status === 302) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = '✅ Backend API يعمل بشكل صحيح\n✅ Google OAuth Redirect متاح';
+                    statusDiv.className = 'status-indicator status-ok';
+                    testResults.backend = true;
+                } else {
+                    throw new Error(`استجابة غير متوقعة: ${response.status}`);
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ خطأ في Backend API:\n${error.message}\n\nتأكد من تشغيل Laravel: php artisan serve`;
+                statusDiv.className = 'status-indicator status-error';
+                testResults.backend = false;
+            }
+            
+            updateTestSummary();
+        }
+
+        // تسجيل الدخول بـ Google (Redirect)
+        function redirectToGoogle() {
+            const resultDiv = document.getElementById('google-result');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '🔄 جاري التوجيه إلى Google...';
+            
+            setTimeout(() => {
+                window.location.href = `${API_URL}/api/auth/google`;
+            }, 1000);
+        }
+
+        // معالجة استجابة Google Identity Services
+        function handleCredentialResponse(response) {
+            const resultDiv = document.getElementById('google-result');
+            const statusDiv = document.getElementById('google-status');
+            resultDiv.style.display = 'block';
+            
+            if (response.credential) {
+                resultDiv.className = 'result info';
+                resultDiv.textContent = '🔄 جاري إرسال بيانات الاعتماد إلى Backend...';
+                
+                // إرسال بيانات الاعتماد إلى Backend
+                fetch(`${API_URL}/api/auth/google/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        credential: response.credential
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        resultDiv.className = 'result success';
+                        resultDiv.textContent = `✅ تم تسجيل الدخول بنجاح!
+
+مرحباً ${data.data.user.name}
+الدور: ${data.data.role}
+البريد الإلكتروني: ${data.data.user.email}`;
+                        statusDiv.className = 'status-indicator status-ok';
+                        testResults.google = true;
+                    } else {
+                        throw new Error(data.message || 'فشل تسجيل الدخول');
+                    }
+                })
+                .catch(error => {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ خطأ في تسجيل الدخول:\n${error.message}`;
+                    statusDiv.className = 'status-indicator status-error';
+                    testResults.google = false;
+                })
+                .finally(() => {
+                    updateTestSummary();
+                });
+            } else {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ لم يتم الحصول على بيانات الاعتماد من Google';
+                statusDiv.className = 'status-indicator status-error';
+                testResults.google = false;
+                updateTestSummary();
+            }
+        }
+
+        // تحديث ملخص الاختبارات
+        function updateTestSummary() {
+            const summaryDiv = document.getElementById('test-summary');
+            const total = Object.keys(testResults).length;
+            const passed = Object.values(testResults).filter(result => result === true).length;
+            const failed = Object.values(testResults).filter(result => result === false).length;
+            const pending = total - passed - failed;
+            
+            summaryDiv.innerHTML = `
+                <div style="margin: 10px 0;">
+                    <strong>إجمالي الاختبارات:</strong> ${total}<br>
+                    <span style="color: #28a745;">✅ نجح: ${passed}</span><br>
+                    <span style="color: #dc3545;">❌ فشل: ${failed}</span><br>
+                    <span style="color: #6c757d;">⏳ قيد الانتظار: ${pending}</span>
+                </div>
+                ${passed === total ? '<div style="color: #28a745; font-weight: bold;">🎉 جميع الاختبارات نجحت!</div>' : ''}
+            `;
+        }
+
+        // تهيئة الصفحة
+        window.onload = function() {
+            // محاولة قراءة Google Client ID من متغير البيئة أو إدخاله يدوياً
+            const clientId = 'YOUR_GOOGLE_CLIENT_ID_HERE'; // غيّر هذا إلى Client ID الخاص بك
+            
+            if (clientId && clientId !== 'YOUR_GOOGLE_CLIENT_ID_HERE') {
+                document.getElementById('g_id_onload').dataset.client_id = clientId;
+            }
+            
+            updateTestSummary();
+        };
+    </script>
+</body>
+</html>
