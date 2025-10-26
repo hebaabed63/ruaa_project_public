@@ -16,16 +16,10 @@ export const loginSchema = Yup.object().shape({
 
 // Register form validation schema
 export const registerSchema = Yup.object().shape({
-  fullName: Yup.string()
-    .required("الاسم الكامل مطلوب")
-    .min(3, "الاسم الكامل يجب أن يكون 3 أحرف على الأقل")
-    .max(50, "الاسم الكامل يجب ألا يتجاوز 50 حرفاً")
-    .matches(/^[\u0600-\u06FFa-zA-Z\s]+$/, "الاسم يجب أن يحتوي على أحرف عربية أو إنجليزية فقط")
-    .test('two-words', 'يجب إدخال الاسم الأول والأخير على الأقل', (value) => {
-      if (!value) return false;
-      const words = value.trim().split(/\s+/);
-      return words.length >= 2 && words.every(word => word.length >= 2);
-    }),
+  username: Yup.string()
+  .required("اسم المستخدم مطلوب")
+  .min(4, "اسم المستخدم يجب أن يكون أكثر من 4 أحرف")
+  .matches(/^[A-Za-z0-9]+$/, "اسم المستخدم يجب أن يكون بالإنجليزية فقط"),
   email: Yup.string()
     .email("صيغة البريد الإلكتروني غير صحيحة")
     .required("البريد الإلكتروني مطلوب"),
@@ -62,4 +56,28 @@ export const resetPasswordSchema = Yup.object().shape({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password"), null], "كلمتا المرور غير متطابقتين")
     .required("تأكيد كلمة المرور مطلوب"),
+});
+
+// Contact form validation schema
+export const contactFormSchema = Yup.object().shape({
+  name: Yup.string()
+    .required('الاسم مطلوب')
+    .min(2, 'الاسم يجب أن يكون أكثر من حرفين')
+    .max(50, 'الاسم يجب أن يكون أقل من 50 حرف')
+    .matches(/^[\u0600-\u06FFa-zA-Z\s]+$/, 'الاسم يجب أن يحتوي على أحرف فقط'),
+  
+  email: Yup.string()
+    .email('صيغة البريد الإلكتروني غير صحيحة')
+    .required('البريد الإلكتروني مطلوب')
+    .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'يجب إدخال بريد إلكتروني صحيح'),
+  
+  address: Yup.string()
+    .required('العنوان مطلوب')
+    .min(5, 'العنوان يجب أن يكون أكثر من 5 أحرف')
+    .max(100, 'العنوان يجب أن يكون أقل من 100 حرف'),
+  
+  message: Yup.string()
+    .required('الرسالة مطلوبة')
+    .min(10, 'الرسالة يجب أن تكون أكثر من 10 أحرف')
+    .max(1000, 'الرسالة يجب أن تكون أقل من 1000 حرف')
 });

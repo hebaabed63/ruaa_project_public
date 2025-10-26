@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Notifications</title>
+</head>
+<body>
+    <h1>Test Notifications</h1>
+    <div id="output"></div>
+
+    <script>
+        // Test localStorage
+        try {
+            const saved = localStorage.getItem('parentNotifications');
+            document.getElementById('output').innerHTML += '<p>Saved notifications in localStorage: ' + saved + '</p>';
+            
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                document.getElementById('output').innerHTML += '<p>Parsed notifications: ' + JSON.stringify(parsed, null, 2) + '</p>';
+                document.getElementById('output').innerHTML += '<p>Number of notifications: ' + parsed.length + '</p>';
+                document.getElementById('output').innerHTML += '<p>Unread notifications: ' + parsed.filter(n => !n.read).length + '</p>';
+            } else {
+                document.getElementById('output').innerHTML += '<p>No notifications found in localStorage</p>';
+            }
+        } catch (error) {
+            document.getElementById('output').innerHTML += '<p>Error reading localStorage: ' + error.message + '</p>';
+        }
+
+        // Test mock notifications
+        const mockNotifications = [
+            {
+                id: 'n-001',
+                schoolId: 'school_001',
+                schoolName: 'مدرسة الأمل الابتدائية',
+                directorate: 'مديرية شرق غزة',
+                type: 'achievement',
+                title: 'فوز في مسابقة الرياضيات',
+                message: 'مدرسة الأمل الابتدائية حصلت على جائزة المركز الأول في مسابقة الرياضيات على مستوى المحافظة.',
+                date: '2025-09-20T10:30:00Z',
+                timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+                read: false
+            },
+            {
+                id: 'n-002',
+                schoolId: 'school_002',
+                schoolName: 'مدرسة النجاح المتوسطة',
+                directorate: 'مديرية شرق غزة',
+                type: 'improvement',
+                title: 'تحسين المرافق العامة',
+                message: 'مدرسة النجاح المتوسطة قامت بتحسين المرافق العامة: ترميم الفناء وتجديد دورات المياه.',
+                date: '2025-09-18T09:00:00Z',
+                timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+                read: false
+            }
+        ];
+
+        document.getElementById('output').innerHTML += '<p>Mock notifications: ' + JSON.stringify(mockNotifications, null, 2) + '</p>';
+        document.getElementById('output').innerHTML += '<p>Number of mock notifications: ' + mockNotifications.length + '</p>';
+        document.getElementById('output').innerHTML += '<p>Unread mock notifications: ' + mockNotifications.filter(n => !n.read).length + '</p>';
+    </script>
+</body>
+</html>

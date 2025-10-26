@@ -11,16 +11,18 @@ import PasswordResetSuccess from "../pages/auth/PasswordResetSuccess";
 import GoogleCallback from "../pages/auth/GoogleCallback";
 
 // Public Pages
+// Public Pages
+import LandingPage from '../pages/public/Home/LandingPage';
+import About from '../pages/public/About/index';
+import Objectives from '../pages/public/Objectives/index';
+import Ratings from '../pages/public/Ratings/index';
+import Schools from '../pages/public/Schools/index';
+import Services from '../pages/public/Services/index';
+import Contact from '../pages/public/Contact/index';
+import Privacy from '../pages/public/Privacy/index';
+import Terms from '../pages/public/Terms/index';
+import Support from '../pages/public/Support/index';
 
-import LandingPage from "../pages/public/Home/LandingPage";
-/*
-import AboutPage from '../pages/public/About/AboutPage';
-import ContactPage from '../pages/public/Contact/ContactPage';
-import ServicesPage from '../pages/public/Services/ServicesPage';
-import GoalsPage from '../pages/public/Goals/GoalsPage';
-import SchoolsPage from '../pages/public/Schools/SchoolsPage';
-import EvaluationPage from '../pages/public/Evaluation/EvaluationPage';
-*/
 // Dashboard Components
 import AdminDashboard from "../pages/dashboard/admin/AdminDashboard";
 import ParentDashboard from "../pages/dashboard/ParentDashboard";
@@ -40,15 +42,28 @@ export default function AppRoutes() {
   return (
     <Routes>
       {/* Public routes */}
+        {/* Public routes */}
       <Route path="/" element={<LandingPage />} />
-      {/*
-      <Route path="/about" element={<AboutPage />} />
-      <Route path="/contact" element={<ContactPage />} />
-      <Route path="/services" element={<ServicesPage />} />
-      <Route path="/goals" element={<GoalsPage />} />
-      <Route path="/schools" element={<SchoolsPage />} />
-      <Route path="/evaluation" element={<EvaluationPage />} />
-       */}
+      <Route path="/about" element={<About />} />
+      <Route path="/About" element={<About />} />
+      <Route path="/objectives" element={<Objectives />} />
+      <Route path="/Objectives" element={<Objectives />} />
+      <Route path="/ratings" element={<Ratings />} />
+      <Route path="/Ratings" element={<Ratings />} />
+      <Route path="/schools" element={<Schools />} />
+      <Route path="/Schools" element={<Schools />} />
+      <Route path="/services" element={<Services />} />
+      <Route path="/Services" element={<Services />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/Contact" element={<Contact />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/Privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/Terms" element={<Terms />} />
+      <Route path="/support" element={<Support />} />
+      <Route path="/Support" element={<Support />} />
+      {/* <Route path="/dashboard/parents/*" element={<ParentsDashboardLayout />} /> */}
+
       {/* Auth routes (without layout) */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
@@ -58,32 +73,33 @@ export default function AppRoutes() {
       <Route path="/auth/google/callback" element={<GoogleCallback />} />
 
       {/* Protected Dashboards */}
-      <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["admin"]} userRole={userRole} />}>
+      
+      {/* <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["admin"]} userRole={userRole} />}>
         <Route path="/dashboard/admin" element={<AdminDashboard />} />
-      </Route>
+      </Route> */}
 
       {/* Temporary routes for testing - remove in production */}
       {/*<Route path="/admin-demo" element={<AdminDashboard />} />*/}
-      <Route path="/parents-demo" element={<ParentsDashboard />} />
+      {/* <Route path="/parents-demo" element={<ParentsDashboard />} />
       <Route path="/supervisor-demo" element={<SupervisorDashboard />} />
       <Route path="/school-manager-demo" element={<SchoolManagerDashboard />} />
-      
+       */}
 
       {/* Temporary direct access to parents dashboard for Google OAuth testing */}
-      <Route path="/dashboard/parents" element={<ParentsDashboard />} />
+      {/* <Route path="/dashboard/parents" element={<ParentsDashboard />} />
       
       <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["parent"]} userRole={userRole} />}>
         <Route path="/dashboard/parent" element={<ParentDashboard />} />
         {/* <Route path="/dashboard/parents" element={<ParentsDashboard />} /> */}
-      </Route>
+      {/* </Route>
 
       <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["supervisor"]} userRole={userRole} />}>
         <Route path="/dashboard/supervisor" element={<SupervisorDashboard />} />
-      </Route>
+      </Route> */} 
 
-      <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["school-manager"]} userRole={userRole} />}>
-        <Route path="/dashboard/school-manager" element={<SchoolManagerDashboard />} />
-      </Route>
+      {/* // <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["school-manager"]} userRole={userRole} />}>
+      //   <Route path="/dashboard/school-manager" element={<SchoolManagerDashboard />} />
+      // </Route> */}
 
       {/* Catch-all / Errors */}
       <Route path="*" element={<NotFound />} />

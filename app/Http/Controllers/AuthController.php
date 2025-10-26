@@ -306,6 +306,7 @@ class AuthController extends Controller
      */
     public function handleGoogleCallback(Request $request)
     {
+    
         try {
             $code = $request->get('code');
             $state = $request->get('state');
@@ -343,7 +344,7 @@ class AuthController extends Controller
             
             // البحث عن المستخدم بالإيميل
             $user = User::where('email', $googleUser['email'])->first();
-            
+
             if ($user) {
                 // المستخدم موجود، تحديث بياناته
                 $user->update([
