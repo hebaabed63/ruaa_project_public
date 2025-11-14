@@ -1,9 +1,15 @@
 import React from 'react';
+import logo from '../../assets/images/LOGO1.svg';
 
 const ErrorFallback = ({ error, resetErrorBoundary }) => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-md w-full bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 text-center">
+        {/* Platform Logo */}
+        <div className="flex justify-center mb-4">
+          <img src={logo} alt="شعار منصة رؤى" className="h-12 w-auto" />
+        </div>
+        
         <div className="text-red-500 text-6xl mb-4">⚠️</div>
         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
           عذراً، حدث خطأ غير متوقع

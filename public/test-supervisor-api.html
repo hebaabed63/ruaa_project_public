@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار API المشرف</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .section h2 {
+            color: #34495e;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        button.danger {
+            background: #e74c3c;
+        }
+        button.danger:hover {
+            background: #c0392b;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .result pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            direction: ltr;
+            text-align: left;
+        }
+        .success {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .error {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .info {
+            padding: 15px;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 اختبار API المشرف</h1>
+        
+        <div class="info">
+            <strong>ملاحظة:</strong> هذا الملف لاختبار الـ API من المتصفح مباشرة.
+            <br>افتح Developer Tools (F12) لمشاهدة التفاصيل في Console.
+        </div>
+
+        <!-- Section 1: Login -->
+        <div class="section">
+            <h2>1. تسجيل الدخول</h2>
+            <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" value="supervisor@ruaa.com">
+            <input type="password" id="loginPassword" placeholder="كلمة المرور" value="password">
+            <button onclick="login()">تسجيل الدخول</button>
+            <div class="result" id="loginResult"></div>
+        </div>
+
+        <!-- Section 2: Check Token -->
+        <div class="section">
+            <h2>2. التحقق من Token</h2>
+            <button onclick="checkToken()">عرض Token المحفوظ</button>
+            <button class="danger" onclick="clearToken()">مسح Token</button>
+            <div class="result" id="tokenResult"></div>
+        </div>
+
+        <!-- Section 3: Get Profile -->
+        <div class="section">
+            <h2>3. جلب الملف الشخصي</h2>
+            <button onclick="getProfile()">جلب الملف الشخصي</button>
+            <div class="result" id="profileResult"></div>
+        </div>
+
+        <!-- Section 4: Get Schools -->
+        <div class="section">
+            <h2>4. جلب المدارس</h2>
+            <button onclick="getSchools()">جلب المدارس</button>
+            <div class="result" id="schoolsResult"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:8000/api';
+
+        // Login function
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const resultDiv = document.getElementById('loginResult');
+
+            try {
+                console.log('Attempting login...');
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                console.log('Login response:', data);
+
+                if (response.ok && data.token) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('role', data.user.role);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    resultDiv.innerHTML = `<p class="success">✅ تم تسجيل الدخول بنجاح!</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    resultDiv.innerHTML = `<p class="error">❌ فشل تسجيل الدخول</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                resultDiv.innerHTML = `<p class="error">❌ خطأ: ${error.message}</p>`;
+            }
+        }
+
+        // Check token function
+        function checkToken() {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role');
+            const user = localStorage.getItem('user');
+            const resultDiv = document.getElementById('tokenResult');
+
+            if (token) {
+                resultDiv.innerHTML = `
+                    <p class="success">✅ Token موجود!</p>
+                    <p><strong>Token:</strong> ${token.substring(0, 50)}...</p>
+                    <p><strong>Role:</strong> ${role}</p>
+                    <p><strong>User:</strong></p>
+                    <pre>${user}</pre>
+                `;
+            } else {
+                resultDiv.innerHTML = `<p class="error">❌ لا يوجد Token محفوظ!</p>`;
+            }
+        }
+
+        // Clear token function
+        function clearToken() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            localStorage.removeItem('user');
+            document.getElementById('tokenResult').innerHTML = `<p class="success">✅ تم مسح Token بنجاح!</p>`;
+        }
+
+        // Get profile function
+        async function getProfile() {
+            const token = localStorage.getItem('token');
+            const resultDiv = document.getElementById('profileResult');
+
+            if (!token) {
+                resultDiv.innerHTML = `<p class="error">❌ يجب تسجيل الدخول أولاً!</p>`;
+                return;
+            }
+
+            try {
+                console.log('Fetching profile...');
+                console.log('Token:', token.substring(0, 50) + '...');
+                
+                const response = await fetch(`${API_URL}/supervisor/profile`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Profile response:', data);
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `<p class="success">✅ تم جلب الملف الشخصي بنجاح!</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    resultDiv.innerHTML = `<p class="error">❌ فشل جلب الملف الشخصي (Status: ${response.status})</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                console.error('Profile error:', error);
+                resultDiv.innerHTML = `<p class="error">❌ خطأ: ${error.message}</p>`;
+            }
+        }
+
+        // Get schools function
+        async function getSchools() {
+            const token = localStorage.getItem('token');
+            const resultDiv = document.getElementById('schoolsResult');
+
+            if (!token) {
+                resultDiv.innerHTML = `<p class="error">❌ يجب تسجيل الدخول أولاً!</p>`;
+                return;
+            }
+
+            try {
+                console.log('Fetching schools...');
+                
+                const response = await fetch(`${API_URL}/supervisor/schools`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Schools response:', data);
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `<p class="success">✅ تم جلب المدارس بنجاح!</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    resultDiv.innerHTML = `<p class="error">❌ فشل جلب المدارس (Status: ${response.status})</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                console.error('Schools error:', error);
+                resultDiv.innerHTML = `<p class="error">❌ خطأ: ${error.message}</p>`;
+            }
+        }
+
+        // Check token on page load
+        window.onload = function() {
+            checkToken();
+        };
+    </script>
+</body>
+</html>

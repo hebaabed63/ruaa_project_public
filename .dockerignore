@@ -1,0 +1,46 @@
+# Docker ignore file for Ruaa Project
+
+# Ignore version control files
+.git
+.gitignore
+
+# Ignore IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# Ignore log files
+.env
+.env.local
+.env.*.local
+log
+logs
+*.log
+
+# Ignore node_modules (will be installed during build)
+node_modules
+frontend/my-project-main/node_modules
+
+# Ignore cache directories
+vendor
+.cache
+storage/framework/cache
+storage/framework/sessions
+storage/framework/views
+storage/logs
+storage/app/public
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore Docker files (to avoid recursive inclusion)
+docker
+Dockerfile
+docker-compose.yml
+docker-compose.override.yml
+
+# Ignore build artifacts
+*.zip
+*.tar.gz

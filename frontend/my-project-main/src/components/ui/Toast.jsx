@@ -106,7 +106,7 @@ const Toast = ({
             <IconComponent className="w-4 h-4 text-white" />
           </div>
           
-          <div className={`flex-1 ${config.textColor} font-cairo`}>
+          <div className={`flex-1 ${config.textColor}`}>
             <p className="text-sm font-medium leading-5">
               {message}
             </p>

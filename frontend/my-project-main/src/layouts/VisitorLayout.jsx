@@ -1,6 +1,7 @@
 import React from 'react';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaMapMarkerAlt, FaPhone, FaEnvelope } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 // Header Component
 const Header = () => {
@@ -170,7 +171,24 @@ const VisitorLayout = ({ children }) => {
   return (
     <div className="flex flex-col min-h-screen" dir="rtl">
       <Header />
-      <main className="flex-grow">{children}</main>
+      <main className="flex-grow relative">
+        {/* Legal links in the body, centered at the top */}
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 flex space-x-6 space-x-reverse z-10">
+          <Link 
+            to="/privacy"
+            className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+          >
+            سياسة الخصوصية
+          </Link>
+          <Link 
+            to="/terms"
+            className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+          >
+            شروط الاستخدام
+          </Link>
+        </div>
+        {children}
+      </main>
       <Footer />
     </div>
   );

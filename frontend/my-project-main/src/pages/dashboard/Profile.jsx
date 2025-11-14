@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaUser, FaEdit, FaSave, FaTimes, FaCamera } from 'react-icons/fa';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -11,6 +12,9 @@ const Profile = () => {
     role: 'ولي أمر',
     profileImage: null
   });
+
+  // Set page title
+  usePageTitle("الملف الشخصي");
 
   const handleInputChange = (e) => {
     setFormData({

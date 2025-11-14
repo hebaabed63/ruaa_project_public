@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="67" height="50" viewBox="0 0 67 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- First column - using logo colors -->
+  <circle cx="61.5683" cy="4.73602" r="4.73602" fill="#30a1db"/>
+  <circle cx="61.5683" cy="24.6271" r="4.73602" fill="#252258"/>
+  <circle cx="61.5683" cy="44.5187" r="4.73602" fill="#64c8cc"/>
+  
+  <!-- Second column - using logo colors -->
+  <circle cx="42.624" cy="4.73602" r="4.73602" fill="#64c8cc"/>
+  <circle cx="42.624" cy="24.6271" r="4.73602" fill="#30a1db"/>
+  <circle cx="42.624" cy="44.5187" r="4.73602" fill="#252258"/>
+  
+  <!-- Third column - using logo colors -->
+  <circle cx="23.6804" cy="4.73602" r="4.73602" fill="#252258"/>
+  <circle cx="23.6804" cy="24.6271" r="4.73602" fill="#64c8cc"/>
+  <circle cx="23.6804" cy="44.5187" r="4.73602" fill="#30a1db"/>
+  
+  <!-- Fourth column - using logo colors -->
+  <circle cx="4.73602" cy="4.73602" r="4.73602" fill="#30a1db"/>
+  <circle cx="4.73602" cy="24.6271" r="4.73602" fill="#64c8cc"/>
+  <circle cx="4.73602" cy="44.5187" r="4.73602" fill="#252258"/>
+</svg>

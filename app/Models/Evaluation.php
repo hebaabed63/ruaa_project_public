@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Evaluation extends Model
 {
     protected $primaryKey = 'evaluation_id';
-    protected $fillable = ['school_id', 'supervisor_id', 'parent_id', 'date'];
+    protected $fillable = ['school_id', 'supervisor_id', 'parent_id', 'date' ,'comment'];
     
     public function school()
     {
@@ -28,5 +28,10 @@ class Evaluation extends Model
     {
         return $this->belongsToMany(Criterion::class, 'evaluation_criteria', 'evaluation_id', 'criterion_id')
             ->withPivot('score');
+    }
+    
+      public function items()
+    {
+        return $this->hasMany(EvaluationCriterion::class, 'evaluation_id', 'evaluation_id');
     }
 }

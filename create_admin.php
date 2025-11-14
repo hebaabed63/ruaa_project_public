@@ -4,7 +4,7 @@ echo "=== إنشاء مستخدم أدمن ===\n";
 
 // إنشاء مستخدم أدمن
 $adminData = json_encode([
-    'name' => 'أدمن النظام',
+    'fullName' => 'أدمن النظام',
     'email' => 'admin@ruaa.com',
     'password' => 'admin123',
     'confirmPassword' => 'admin123'

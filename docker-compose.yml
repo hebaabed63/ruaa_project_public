@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: raua_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - raua_network
+    depends_on:
+      - db
+      - mailpit
+    ports:
+      - "9000:9000"  # PHP-FPM
+      - "3000:3000"  # Vite Dev Server
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=rua_db
+      - DB_USERNAME=root
+      - DB_PASSWORD=
+      - MAIL_HOST=mailpit
+      - MAIL_PORT=1025
+      - REDIS_HOST=redis
+      - RUN_MIGRATIONS=true
+
+  web:
+    image: nginx:alpine
+    container_name: raua_web
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - raua_network
+    depends_on:
+      - app
+
+  db:
+    image: mysql:8.0
+    container_name: raua_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: rua_db
+      MYSQL_ROOT_PASSWORD: 
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - raua_network
+    ports:
+      - "3306:3306"
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: raua_mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - raua_network
+
+  redis:
+    image: redis:alpine
+    container_name: raua_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - raua_network
+
+networks:
+  raua_network:
+    driver: bridge
+
+volumes:
+  db_data:

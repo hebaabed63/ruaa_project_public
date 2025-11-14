@@ -165,7 +165,7 @@ const GoogleSignInButton = ({
           className={`w-full flex items-center justify-center gap-2.5 border border-gray-300 rounded-full py-2 h-11 hover:shadow-md transition-all duration-300 hover:bg-gray-50 ${buttonClassName}`}
         >
           <GoogleIcon />
-          <span className="font-cairo font-medium text-base">
+          <span className="font-medium text-base">
             {text}
           </span>
         </button>
@@ -185,7 +185,7 @@ const GoogleSignInButton = ({
         className={`hidden w-full flex items-center justify-center gap-2.5 border border-gray-300 rounded-full py-2 h-11 hover:shadow-md transition-all duration-300 hover:bg-gray-50 ${buttonClassName}`}
       >
         <GoogleIcon />
-        <span className="font-cairo font-medium text-base">
+        <span className="font-medium text-base">
           {text}
         </span>
       </button>

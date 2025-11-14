@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/favicon-blue-only.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <title>اختبار Google OAuth</title>
     <style>
         body {
@@ -28,6 +30,15 @@
             color: #333;
             margin-bottom: 20px;
             font-size: 2rem;
+        }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
         }
         .description {
             color: #666;
@@ -73,10 +84,15 @@
 </head>
 <body>
     <div class="container">
+        <!-- Add logo container -->
+        <div class="logo-container">
+            <img src="/favicon-temp.svg" alt="Logo" class="logo">
+        </div>
+        
         <h1>🔐 اختبار Google OAuth</h1>
         
         <div class="description">
-            هذا اختبار للتأكد من أن Google OAuth يعمل بالطريقة المطلوبة:
+            هذا اختبار للتأكد من أن Google OAuth يعمل بالطريقة المطلوبة：
         </div>
         
         <div class="step">
@@ -88,7 +104,7 @@
         </div>
         
         <div class="step">
-            <strong>الخطوة 3:</strong> تسجيل دخول تلقائي بدون كلمة مرور!
+            <strong>الخطوة 3:</strong> تسجيل دخول تلقائي بدون كلمة مرور！
         </div>
         
         <!-- Google Sign-In Button -->

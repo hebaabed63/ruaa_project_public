@@ -8,18 +8,18 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
+          50: '#e6f7ff',
+          100: '#b3e6ff',
+          200: '#80d4ff',
+          300: '#4dc3ff',
+          400: '#1ab2ff',
+          500: '#30a1db', // Updated to match logo color
+          600: '#257db7',
+          700: '#1a5993',
+          800: '#10356f',
+          900: '#05114b',
         },
-        secondary: '#002147',
+        secondary: '#252258', // Updated to match logo dark color
         success: '#10b981',
         warning: '#f59e0b',
         danger: '#ef4444',
@@ -28,9 +28,16 @@ module.exports = {
         light: '#f8fafc',
       },
       fontFamily: {
-        sans: ['Cairo', 'sans-serif'],
-        english: ['Inter', 'sans-serif'],
-        arabic: ['Cairo', 'sans-serif'],
+        sans: ['Cairo', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen',
+          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+          'sans-serif'],
+        english: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen',
+          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+          'sans-serif'],
+        arabic: ['Cairo', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen',
+          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+          'sans-serif'],
+        cairo: ['Cairo', 'sans-serif'],
       },
       boxShadow: {
         card: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
@@ -55,4 +62,3 @@ module.exports = {
     rtl: true,
   },
 }
-
