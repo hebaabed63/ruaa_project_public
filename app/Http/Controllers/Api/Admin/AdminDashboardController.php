@@ -274,4 +274,53 @@ class AdminDashboardController extends Controller
             ], 500);
         }
     }
+    
+    /**
+     * Get recent user registrations
+     */
+    public function getRecentRegistrations(Request $request)
+    {
+        try {
+            $user = $request->user();
+            
+            // التحقق من أن المستخدم مسؤول
+            if ($user->role !== 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'غير مسموح لك بالوصول لهذه البيانات'
+                ], 403);
+            }
+            
+            // Get recent user registrations
+            $recentRegistrations = User::select('user_id', 'name', 'email', 'role', 'created_at as registered_at')
+                ->orderBy('created_at', 'desc')
+                ->limit(10)
+                ->get();
+            
+            // تحويل الأدوار إلى نصوص
+            $roleNames = [
+                0 => 'مدير النظام',
+                1 => 'مشرف',
+                2 => 'مدير مدرسة',
+                3 => 'ولي أمر'
+            ];
+            
+            $recentRegistrations->transform(function ($user) use ($roleNames) {
+                $user->role_name = $roleNames[$user->role] ?? 'غير محدد';
+                return $user;
+            });
+            
+            return response()->json([
+                'success' => true,
+                'data' => $recentRegistrations,
+                'message' => 'تم جلب أحدث التسجيلات بنجاح'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ في جلب أحدث التسجيلات: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

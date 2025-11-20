@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaSave, FaSpinner, FaInfoCircle } from 'react-icons/fa';
-import { showAlert } from "../../utils/SweetAlert";
-import { getSystemSettings, updateSystemSettings } from "../../services/adminService";
+import { showAlert } from "../../../../utils/SweetAlert";
+import { getSystemSettings, updateSystemSettings } from "../../../../services/adminService";
 
 const SettingsManagement = () => {
   const [loading, setLoading] = useState(false);
@@ -210,7 +210,7 @@ const SettingsManagement = () => {
   };
 
   const renderGeneralSettings = () => (
-    <div className="space-y-6 animate__animated animate__fadeIn">
+    <div className="space-y-6">
       <h3 className="text-lg font-medium text-gray-900">الإعدادات العامة</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -280,7 +280,7 @@ const SettingsManagement = () => {
   );
 
   const renderEmailSettings = () => (
-    <div className="space-y-6 animate__animated animate__fadeIn">
+    <div className="space-y-6">
       <h3 className="text-lg font-medium text-gray-900">إعدادات البريد الإلكتروني</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -357,7 +357,7 @@ const SettingsManagement = () => {
   );
 
   const renderNotificationSettings = () => (
-    <div className="space-y-6 animate__animated animate__fadeIn">
+    <div className="space-y-6">
       <h3 className="text-lg font-medium text-gray-900">إعدادات الإشعارات</h3>
       
       <div className="space-y-4">
@@ -428,7 +428,7 @@ const SettingsManagement = () => {
   );
 
   const renderSecuritySettings = () => (
-    <div className="space-y-6 animate__animated animate__fadeIn">
+    <div className="space-y-6">
       <h3 className="text-lg font-medium text-gray-900">إعدادات الأمان</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -502,7 +502,7 @@ const SettingsManagement = () => {
   );
 
   const renderAppearanceSettings = () => (
-    <div className="space-y-6 animate__animated animate__fadeIn">
+    <div className="space-y-6">
       <h3 className="text-lg font-medium text-gray-900">إعدادات المظهر</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -571,7 +571,7 @@ const SettingsManagement = () => {
   );
 
   const renderMaintenanceSettings = () => (
-    <div className="space-y-6 animate__animated animate__fadeIn">
+    <div className="space-y-6">
       <h3 className="text-lg font-medium text-gray-900">إعدادات الصيانة</h3>
       
       <div className="space-y-4">
@@ -597,7 +597,7 @@ const SettingsManagement = () => {
         </div>
         
         {settings.maintenanceMode && (
-          <div className="animate__animated animate__fadeInDown">
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               رسالة الصيانة
             </label>

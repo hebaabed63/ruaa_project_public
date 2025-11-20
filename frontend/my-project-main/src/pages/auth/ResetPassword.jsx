@@ -104,7 +104,7 @@ export default function ResetPassword() {
                 <button
                   type="submit"
                   disabled={btnState.disabled || isSubmitting}
-                  className={`w-full h-12 bg-primary text-white text-lg font-cairo font-medium rounded-full hover:bg-secondary transition mt-4 mb-2 ${btnState.className}`}
+                    className={`w-full h-11 mt-2 bg-[#2ca1db] text-white text-lg font-bold font-cairo rounded-full hover:bg-[#C4E4F5] transition ${btnState.className} flex items-center justify-center`}
                 >
                   {isSubmitting ? "جاري التعيين..." : "تعيين كلمة المرور"}
                 </button>

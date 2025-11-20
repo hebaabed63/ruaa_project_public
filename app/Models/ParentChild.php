@@ -9,44 +9,33 @@ class ParentChild extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'id';
     protected $table = 'parent_children';
-    protected $primaryKey = 'child_id';
 
     protected $fillable = [
         'parent_id',
-        'school_id',
+        'child_id',
         'child_name',
         'child_grade',
         'child_section',
-        'status',
-        'enrollment_date',
+        'school_id',
+        'status'
     ];
 
-    protected $casts = [
-        'enrollment_date' => 'date',
-    ];
-
-    /**
-     * Get the parent (user) that owns the child.
-     */
-    public function parent()
+    // Scopes
+    public function scopeActive($query)
     {
-        return $this->belongsTo(User::class, 'parent_id', 'user_id');
+        return $query->where('status', 'active');
     }
 
-    /**
-     * Get the school that the child attends.
-     */
+    // Relationships
     public function school()
     {
         return $this->belongsTo(School::class, 'school_id', 'school_id');
     }
 
-    /**
-     * Scope: Active children only
-     */
-    public function scopeActive($query)
+    public function parent()
     {
-        return $query->where('status', 'active');
+        return $this->belongsTo(User::class, 'parent_id', 'user_id');
     }
 }

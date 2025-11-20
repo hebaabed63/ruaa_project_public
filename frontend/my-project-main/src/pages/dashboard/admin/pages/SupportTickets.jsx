@@ -1,66 +1,66 @@
 import React, { useState, useEffect } from "react";
-import { FaSpinner, FaEye, FaTrash, FaCheck } from 'react-icons/fa';
-import { showAlert } from "../../utils/SweetAlert";
+import { FaSpinner, FaEye, FaTrash, FaReply, FaCheck } from 'react-icons/fa';
+import { showAlert } from "../../../../utils/SweetAlert";
 import { 
-  getAllComplaints,
-  getComplaintById,
-  updateComplaintStatus,
-  deleteComplaint
-} from "../../services/adminService";
+  getAllSupportTickets,
+  getSupportTicketById,
+  updateSupportTicketStatus,
+  deleteSupportTicket
+} from "../../../../services/adminService";
 
-export default function ComplaintsManagement() {
-  const [complaints, setComplaints] = useState([]);
+export default function SupportTicketsManagement() {
+  const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedComplaint, setSelectedComplaint] = useState(null);
+  const [selectedTicket, setSelectedTicket] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
 
-  // Fetch complaints on component mount
+  // Fetch support tickets on component mount
   useEffect(() => {
-    fetchComplaints();
+    fetchSupportTickets();
   }, []);
 
-  const fetchComplaints = async () => {
+  const fetchSupportTickets = async () => {
     setLoading(true);
     try {
-      const response = await getAllComplaints();
+      const response = await getAllSupportTickets();
       if (response.success) {
-        setComplaints(response.data);
+        setTickets(response.data);
       }
     } catch (error) {
-      showAlert('error', error.message || 'حدث خطأ في جلب الشكاوى');
+      showAlert('error', error.message || 'حدث خطأ في جلب تذاكر الدعم');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleViewComplaint = async (complaintId) => {
+  const handleViewTicket = async (ticketId) => {
     try {
-      const response = await getComplaintById(complaintId);
+      const response = await getSupportTicketById(ticketId);
       if (response.success) {
-        setSelectedComplaint(response.data);
+        setSelectedTicket(response.data);
         setShowDetailsModal(true);
       }
     } catch (error) {
-      showAlert('error', error.message || 'حدث خطأ في جلب تفاصيل الشكوى');
+      showAlert('error', error.message || 'حدث خطأ في جلب تفاصيل التذكرة');
     }
   };
 
-  const handleUpdateStatus = async (complaintId, status) => {
+  const handleUpdateStatus = async (ticketId, status) => {
     try {
-      const response = await updateComplaintStatus(complaintId, status);
+      const response = await updateSupportTicketStatus(ticketId, status);
       if (response.success) {
-        showAlert('success', `تم ${status === 'resolved' ? 'حل' : 'إغلاق'} الشكوى بنجاح`);
-        fetchComplaints(); // Refresh the list
+        showAlert('success', `تم ${status === 'resolved' ? 'حل' : 'إغلاق'} التذكرة بنجاح`);
+        fetchSupportTickets(); // Refresh the list
       }
     } catch (error) {
-      showAlert('error', error.message || 'حدث خطأ في تحديث حالة الشكوى');
+      showAlert('error', error.message || 'حدث خطأ في تحديث حالة التذكرة');
     }
   };
 
-  const handleDeleteComplaint = async (complaintId) => {
+  const handleDeleteTicket = async (ticketId) => {
     const result = await showAlert(
       'warning',
-      'هل أنت متأكد من حذف هذه الشكوى؟',
+      'هل أنت متأكد من حذف هذه التذكرة؟',
       'لا يمكن التراجع عن هذا الإجراء',
       'نعم، احذفها!',
       'إلغاء'
@@ -68,13 +68,13 @@ export default function ComplaintsManagement() {
     
     if (result.isConfirmed) {
       try {
-        const response = await deleteComplaint(complaintId);
+        const response = await deleteSupportTicket(ticketId);
         if (response.success) {
-          showAlert('success', 'تم حذف الشكوى بنجاح');
-          fetchComplaints(); // Refresh the list
+          showAlert('success', 'تم حذف التذكرة بنجاح');
+          fetchSupportTickets(); // Refresh the list
         }
       } catch (error) {
-        showAlert('error', error.message || 'حدث خطأ في حذف الشكوى');
+        showAlert('error', error.message || 'حدث خطأ في حذف التذكرة');
       }
     }
   };
@@ -88,6 +88,27 @@ export default function ComplaintsManagement() {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const getPriorityBadge = (priority) => {
+    switch (priority) {
+      case 'high':
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+          عالية
+        </span>;
+      case 'medium':
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+          متوسطة
+        </span>;
+      case 'low':
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          منخفضة
+        </span>;
+      default:
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+          غير معروفة
+        </span>;
+    }
   };
 
   const getStatusBadge = (status) => {
@@ -126,10 +147,10 @@ export default function ComplaintsManagement() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">إدارة الشكاوى</h1>
+        <h1 className="text-2xl font-bold text-gray-800">إدارة تذاكر الدعم الفني</h1>
       </div>
 
-      {complaints.length > 0 ? (
+      {tickets.length > 0 ? (
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -142,13 +163,13 @@ export default function ComplaintsManagement() {
                     المرسل
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    النوع
+                    الأولوية
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     الحالة
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    تاريخ الإرسال
+                    تاريخ الإنشاء
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     الإجراءات
@@ -156,47 +177,45 @@ export default function ComplaintsManagement() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {complaints.map((complaint) => (
-                  <tr key={complaint.complaint_id} className="hover:bg-gray-50">
+                {tickets.map((ticket) => (
+                  <tr key={ticket.ticket_id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {complaint.title}
+                      {ticket.title}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {complaint.user_name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {complaint.complaint_type === 'technical' && 'تقنية'}
-                      {complaint.complaint_type === 'service' && 'خدمة'}
-                      {complaint.complaint_type === 'other' && 'أخرى'}
+                      {ticket.user_name}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {getStatusBadge(complaint.status)}
+                      {getPriorityBadge(ticket.priority)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {getStatusBadge(ticket.status)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(complaint.created_at)}
+                      {formatDate(ticket.created_at)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2 space-x-reverse">
                         <button
-                          onClick={() => handleViewComplaint(complaint.complaint_id)}
+                          onClick={() => handleViewTicket(ticket.ticket_id)}
                           className="text-blue-600 hover:text-blue-900 p-1"
                           title="عرض التفاصيل"
                         >
                           <FaEye />
                         </button>
-                        {complaint.status !== 'resolved' && complaint.status !== 'closed' && (
+                        {ticket.status !== 'resolved' && ticket.status !== 'closed' && (
                           <>
                             <button
-                              onClick={() => handleUpdateStatus(complaint.complaint_id, 'resolved')}
+                              onClick={() => handleUpdateStatus(ticket.ticket_id, 'resolved')}
                               className="text-green-600 hover:text-green-900 p-1"
-                              title="حل الشكوى"
+                              title="حل التذكرة"
                             >
                               <FaCheck />
                             </button>
                           </>
                         )}
                         <button
-                          onClick={() => handleDeleteComplaint(complaint.complaint_id)}
+                          onClick={() => handleDeleteTicket(ticket.ticket_id)}
                           className="text-red-600 hover:text-red-900 p-1"
                           title="حذف"
                         >
@@ -212,17 +231,17 @@ export default function ComplaintsManagement() {
         </div>
       ) : (
         <div className="bg-white rounded-lg shadow p-8 text-center">
-          <h3 className="text-lg font-medium text-gray-900 mb-2">لا توجد شكاوى</h3>
-          <p className="text-gray-500">لا توجد شكاوى لعرضها</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">لا توجد تذاكر دعم</h3>
+          <p className="text-gray-500">لا توجد تذاكر دعم لعرضها</p>
         </div>
       )}
 
-      {/* Complaint Details Modal */}
-      {showDetailsModal && selectedComplaint && (
+      {/* Ticket Details Modal */}
+      {showDetailsModal && selectedTicket && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-screen overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold">تفاصيل الشكوى</h3>
+              <h3 className="text-xl font-bold">تفاصيل التذكرة</h3>
               <button
                 onClick={() => setShowDetailsModal(false)}
                 className="text-gray-500 hover:text-gray-700"
@@ -234,50 +253,48 @@ export default function ComplaintsManagement() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">العنوان</label>
-                <p className="mt-1 text-sm text-gray-900">{selectedComplaint.title}</p>
+                <p className="mt-1 text-sm text-gray-900">{selectedTicket.title}</p>
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700">المرسل</label>
-                <p className="mt-1 text-sm text-gray-900">{selectedComplaint.user_name}</p>
+                <p className="mt-1 text-sm text-gray-900">{selectedTicket.user_name}</p>
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700">البريد الإلكتروني</label>
-                <p className="mt-1 text-sm text-gray-900">{selectedComplaint.user_email}</p>
+                <p className="mt-1 text-sm text-gray-900">{selectedTicket.user_email}</p>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700">نوع الشكوى</label>
+                <label className="block text-sm font-medium text-gray-700">الأولوية</label>
                 <p className="mt-1 text-sm text-gray-900">
-                  {selectedComplaint.complaint_type === 'technical' && 'تقنية'}
-                  {selectedComplaint.complaint_type === 'service' && 'خدمة'}
-                  {selectedComplaint.complaint_type === 'other' && 'أخرى'}
+                  {getPriorityBadge(selectedTicket.priority)}
                 </p>
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700">الحالة</label>
                 <p className="mt-1 text-sm text-gray-900">
-                  {getStatusBadge(selectedComplaint.status)}
+                  {getStatusBadge(selectedTicket.status)}
                 </p>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700">تاريخ الإرسال</label>
-                <p className="mt-1 text-sm text-gray-900">{formatDate(selectedComplaint.created_at)}</p>
+                <label className="block text-sm font-medium text-gray-700">تاريخ الإنشاء</label>
+                <p className="mt-1 text-sm text-gray-900">{formatDate(selectedTicket.created_at)}</p>
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700">الوصف</label>
-                <p className="mt-1 text-sm text-gray-900 whitespace-pre-wrap">{selectedComplaint.description}</p>
+                <p className="mt-1 text-sm text-gray-900 whitespace-pre-wrap">{selectedTicket.description}</p>
               </div>
               
-              {selectedComplaint.attachment_url && (
+              {selectedTicket.attachment_url && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700">المرفق</label>
                   <a 
-                    href={selectedComplaint.attachment_url} 
+                    href={selectedTicket.attachment_url} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="mt-1 text-sm text-blue-600 hover:underline"
@@ -288,25 +305,25 @@ export default function ComplaintsManagement() {
               )}
               
               <div className="flex space-x-4 space-x-reverse pt-4">
-                {selectedComplaint.status !== 'resolved' && selectedComplaint.status !== 'closed' && (
+                {selectedTicket.status !== 'resolved' && selectedTicket.status !== 'closed' && (
                   <>
                     <button
                       onClick={() => {
-                        handleUpdateStatus(selectedComplaint.complaint_id, 'resolved');
+                        handleUpdateStatus(selectedTicket.ticket_id, 'resolved');
                         setShowDetailsModal(false);
                       }}
                       className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md"
                     >
-                      حل الشكوى
+                      حل التذكرة
                     </button>
                     <button
                       onClick={() => {
-                        handleUpdateStatus(selectedComplaint.complaint_id, 'closed');
+                        handleUpdateStatus(selectedTicket.ticket_id, 'closed');
                         setShowDetailsModal(false);
                       }}
                       className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md"
                     >
-                      إغلاق الشكوى
+                      إغلاق التذكرة
                     </button>
                   </>
                 )}

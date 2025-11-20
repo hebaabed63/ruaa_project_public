@@ -317,7 +317,7 @@ export default function PrincipalRegistration() {
               <button
                 type="submit"
                 disabled={btnState.disabled || isSubmitting}
-                className={`w-full h-11 text-white text-base font-bold font-cairo rounded-full transition-all duration-300 ease-in-out mb-4 bg-primary hover:bg-secondary ${btnState.className} flex items-center justify-center`}
+                    className={`w-full h-11 mt-2 bg-[#2ca1db] text-white text-lg font-bold font-cairo rounded-full hover:bg-[#C4E4F5] transition ${btnState.className} flex items-center justify-center`}
               >
                 {isSubmitting ? (
                   <>

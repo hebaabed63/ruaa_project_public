@@ -8,11 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class SupervisorLink extends Model
 {
     use HasFactory;
-      protected $table = 'supervisor_links';
+
+    protected $table = 'supervisor_links';
     protected $primaryKey = 'link_id';
     protected $fillable = [
-        'token','link_type','organization_id','is_active',
-        'expires_at','max_uses','used_count'
+        'token',
+        'link_type',
+        'organization_id',
+        'organization_name',
+        'is_active',
+        'expires_at',
+        'max_uses',
+        'used_count'
     ];
 
     public function organization()

@@ -86,7 +86,7 @@ export default function ForgotPassword() {
                 <button
                   type="submit"
                   disabled={btnState.disabled || isSubmitting}
-                  className={`w-full h-11 bg-primary text-white text-base font-cairo font-bold rounded-full hover:bg-secondary transition mt-4 ${btnState.className}`}
+                    className={`w-full h-11 mt-2 bg-[#2ca1db] text-white text-lg font-bold font-cairo rounded-full hover:bg-[#C4E4F5] transition ${btnState.className} flex items-center justify-center`}
                 >
                   {isSubmitting ? "جاري المعالجة..." : "تعيين كلمة مرور جديدة"}
                 </button>

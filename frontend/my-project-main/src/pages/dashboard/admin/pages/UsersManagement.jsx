@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { FaPlus, FaEdit, FaTrash, FaSpinner, FaEye, FaUser, FaUserTie, FaSchool, FaUserFriends } from 'react-icons/fa';
-import { showAlert } from "../../utils/SweetAlert";
+import { showAlert } from "../../../../utils/SweetAlert";
 import { 
   getAllUsers,
   createUser,
   updateUser,
   deleteUser
-} from "../../services/adminService";
+} from "../../../../services/adminService";
 
 export default function UsersManagement() {
   const [users, setUsers] = useState([]);

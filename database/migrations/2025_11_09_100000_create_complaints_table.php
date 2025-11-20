@@ -11,19 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('complaints', function (Blueprint $table) {
-            $table->id('complaint_id');
-            $table->string('title');
-            $table->text('description');
-            $table->unsignedBigInteger('user_id');
-            $table->string('complaint_type')->default('other'); // technical, service, other
-            $table->string('status')->default('open'); // open, in_progress, resolved, closed
-            $table->string('priority')->default('medium'); // high, medium, low
-            $table->timestamps();
-            
-            // Foreign key constraint
-            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
-        });
+        if (!Schema::hasTable('complaints')) {
+            Schema::create('complaints', function (Blueprint $table) {
+                $table->id('complaint_id');
+                $table->string('title');
+                $table->text('description');
+                $table->unsignedBigInteger('user_id');
+                $table->string('complaint_type')->default('other'); // technical, service, other
+                $table->string('status')->default('open'); // open, in_progress, resolved, closed
+                $table->string('priority')->default('medium'); // high, medium, low
+                $table->timestamps();
+                
+                // Foreign key constraint
+                $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
+            });
+        }
     }
 
     /**

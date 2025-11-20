@@ -26,6 +26,7 @@ module.exports = {
         info: '#3b82f6',
         dark: '#1e293b',
         light: '#f8fafc',
+        
       },
       fontFamily: {
         sans: ['Cairo', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen',

@@ -21,7 +21,9 @@ export const getCurrentUser = async (token = null) => {
 // تسجيل الدخول
 export const loginService = async (data) => {
   try {
+    console.log('Attempting login with data:', data);
     const response = await api.post("/auth/login", data);
+    console.log('Login response:', response);
     
     // Store token in localStorage with the correct key
     if (response.data.success && response.data.data.token) {
@@ -31,6 +33,7 @@ export const loginService = async (data) => {
     
     return response.data; // إرجاع البيانات مباشرة
   } catch (error) {
+    console.log('Login error caught:', error);
     // إذا كان هناك رد من الخادم، نرجع رسالة الخطأ
     if (error.response && error.response.data) {
       // Handle specific status cases

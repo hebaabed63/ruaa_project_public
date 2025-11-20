@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { FaPlus, FaSpinner, FaUserCheck, FaUserTimes } from 'react-icons/fa';
-import { AuthContext } from "../../contexts/AuthContext";
+import { AuthContext } from "../../../../contexts/AuthContext";
 
-import { showAlert } from "../../utils/SweetAlert";
+import { showAlert } from "../../../../utils/SweetAlert";
 import { 
   getSupervisorLinks, 
   createSupervisorLink, 
@@ -12,10 +12,10 @@ import {
   getPendingSupervisors,
   approvePendingSupervisor,
   rejectPendingSupervisor
-} from "../../services/adminService";
-import UnifiedLinkManagement from "../../components/LinkManagement/UnifiedLinkManagement";
+} from "../../../../services/adminService";
+import UnifiedLinkManagement from "../../../../components/LinkManagement/UnifiedLinkManagement";
 
-export default function SupervisorLinksManagement() {
+export default function InvitationsManagement() {
   const { userRole } = useContext(AuthContext);
   const [links, setLinks] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);
@@ -66,11 +66,15 @@ export default function SupervisorLinksManagement() {
       const cleanData = {
         ...data,
         link_type: 'supervisor',
-        organization_id: data.organization_id || null,
         organization_name: data.organization_name.trim(),
         expires_at: data.expires_at || null,
         max_uses: data.max_uses ? parseInt(data.max_uses) : null
       };
+      
+      // Only add organization_id if it's provided
+      if (data.organization_id) {
+        cleanData.organization_id = data.organization_id;
+      }
 
       const response = await createSupervisorLink(cleanData);
       

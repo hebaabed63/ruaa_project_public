@@ -38,9 +38,13 @@ class SupervisorPrincipalsController extends Controller
                 ->where('supervisor_id', $user->user_id)
                 ->get();
 
+            // Add warning message for approvers
+            $warningMessage = 'البريد لم يتم التحقق من وجوده فعليًا، تأكد من صحته قبل القبول.';
+
             return response()->json([
                 'success' => true,
-                'data' => $pendingPrincipals
+                'data' => $pendingPrincipals,
+                'warning' => $warningMessage
             ]);
 
         } catch (\Exception $e) {
@@ -83,6 +87,13 @@ class SupervisorPrincipalsController extends Controller
                 'content' => 'تمت الموافقة على حسابك كمدير مدرسة',
                 'link' => '/dashboard/principal'
             ]);
+
+            // إرسال إيميل إشعار بالموافقة
+            try {
+                \Mail::to($principal->email)->send(new \App\Mail\AccountApprovedNotification($principal));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send approval email: ' . $e->getMessage());
+            }
 
             return response()->json([
                 'success' => true,

@@ -83,6 +83,65 @@ export const changeAdminPassword = async (passwordData) => {
 };
 
 /**
+ * Update admin privacy settings
+ * @param {Object} privacyData - The privacy settings to update
+ * @returns {Promise<Object>} Updated privacy settings
+ */
+export const updateAdminPrivacySettings = async (privacyData) => {
+  try {
+    const response = await api.put('/admin/settings', privacyData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating admin privacy settings:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update admin notification settings
+ * @param {Object} notificationData - The notification settings to update
+ * @returns {Promise<Object>} Updated notification settings
+ */
+export const updateAdminNotificationSettings = async (notificationData) => {
+  try {
+    const response = await api.put('/admin/settings', notificationData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating admin notification settings:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get system settings
+ * @returns {Promise<Object>} System settings
+ */
+export const getSystemSettings = async () => {
+  try {
+    const response = await api.get('/admin/settings');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching system settings:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update system settings
+ * @param {Object} settingsData - The settings to update
+ * @returns {Promise<Object>} Updated settings
+ */
+export const updateSystemSettings = async (settingsData) => {
+  try {
+    const response = await api.put('/admin/settings', settingsData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating system settings:', error);
+    throw error;
+  }
+};
+
+/**
  * Fetch users with pagination and filtering
  * @param {Object} params - Filter parameters
  * @returns {Promise<Object>} Paginated users data
@@ -287,7 +346,7 @@ export const deleteReport = async (reportId) => {
  */
 export const fetchInvitations = async (params = {}) => {
   try {
-    const response = await api.get('/admin/invitations', { params });
+    const response = await api.get('/admin/links', { params });
     return response.data.data;
   } catch (error) {
     console.error('Error fetching invitations:', error);
@@ -302,7 +361,7 @@ export const fetchInvitations = async (params = {}) => {
  */
 export const getInvitationDetails = async (invitationId) => {
   try {
-    const response = await api.get(`/admin/invitations/${invitationId}`);
+    const response = await api.get(`/admin/links/${invitationId}`);
     return response.data.data;
   } catch (error) {
     console.error('Error fetching invitation details:', error);
@@ -317,7 +376,7 @@ export const getInvitationDetails = async (invitationId) => {
  */
 export const createInvitation = async (invitationData) => {
   try {
-    const response = await api.post('/admin/invitations', invitationData);
+    const response = await api.post('/admin/links', invitationData);
     return response.data.data;
   } catch (error) {
     console.error('Error creating invitation:', error);
@@ -333,7 +392,7 @@ export const createInvitation = async (invitationData) => {
  */
 export const updateInvitation = async (invitationId, invitationData) => {
   try {
-    const response = await api.put(`/admin/invitations/${invitationId}`, invitationData);
+    const response = await api.put(`/admin/links/${invitationId}`, invitationData);
     return response.data.data;
   } catch (error) {
     console.error('Error updating invitation:', error);
@@ -348,7 +407,7 @@ export const updateInvitation = async (invitationId, invitationData) => {
  */
 export const deleteInvitation = async (invitationId) => {
   try {
-    const response = await api.delete(`/admin/invitations/${invitationId}`);
+    const response = await api.delete(`/admin/links/${invitationId}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting invitation:', error);
@@ -362,6 +421,10 @@ export default {
   updateAdminProfile,
   updateAdminProfileImage,
   changeAdminPassword,
+  updateAdminPrivacySettings,
+  updateAdminNotificationSettings,
+  getSystemSettings,
+  updateSystemSettings,
   fetchUsers,
   getUserDetails,
   updateUserStatus,

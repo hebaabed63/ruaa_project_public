@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { FaCheck, FaTimes, FaSpinner } from 'react-icons/fa';
-import { showAlert } from "../../utils/SweetAlert";
+import { showAlert } from "../../../../utils/SweetAlert";
 import { 
   getPendingUsers,
   approvePendingUser,
   rejectPendingUser
-} from "../../services/adminService";
+} from "../../../../services/adminService";
 
 export default function PendingRequestsManagement() {
   const [pendingUsers, setPendingUsers] = useState([]);

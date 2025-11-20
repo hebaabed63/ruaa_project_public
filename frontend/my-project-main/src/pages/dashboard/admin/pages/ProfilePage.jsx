@@ -1,5 +1,5 @@
+// src/pages/dashboard/admin/pages/ProfilePage.jsx
 import React, { useState, useEffect, useRef } from 'react';
-// Updated import to use admin API service instead of parent API
 import { motion } from 'framer-motion';
 import { 
   FaUser, 
@@ -8,15 +8,11 @@ import {
   FaMapMarkerAlt, 
   FaSave, 
   FaCheck,
-  FaGraduationCap,
-  FaSchool,
   FaCamera
 } from 'react-icons/fa';
-// Updated import to use AdminContext instead of ParentProfileContext
 import { useAdminContext } from '../contexts/AdminContext';
 
 const ProfilePage = () => {
-  // Updated to use admin context instead of parent context
   const { profile: contextProfile, updateProfile, updateAvatar, loading: contextLoading } = useAdminContext();
   const [profile, setProfile] = useState(null);
   const [originalProfile, setOriginalProfile] = useState(null);
@@ -27,7 +23,28 @@ const ProfilePage = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const fileInputRef = useRef(null);
 
-  // Function to handle input changes in the form
+  // تحميل البيانات من الكون텍ست
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (contextProfile) {
+          setProfile(contextProfile);
+          setOriginalProfile({ ...contextProfile });
+          setAvatarPreview(contextProfile.profileImage);
+        }
+      } catch (err) {
+        console.error('Error fetching data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (contextProfile) {
+      fetchData();
+    }
+  }, [contextProfile]);
+
+  // معالجة تغيير الحقول
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProfile(prev => ({
@@ -35,7 +52,7 @@ const ProfilePage = () => {
       [name]: value
     }));
     
-    // Clear error for this field when user starts typing
+    // مسح الخطأ عند البدء بالكتابة
     if (errors[name]) {
       setErrors(prev => {
         const newErrors = { ...prev };
@@ -45,7 +62,7 @@ const ProfilePage = () => {
     }
   };
 
-  // Function to validate individual fields
+  // التحقق من الحقول الفردية
   const validateField = (fieldName, value) => {
     let fieldError = '';
     
@@ -88,14 +105,14 @@ const ProfilePage = () => {
         break;
     }
     
-    // Update errors state
+    // تحديث حالة الأخطاء
     if (fieldError) {
       setErrors(prev => ({
         ...prev,
         [fieldName]: fieldError
       }));
     } else if (errors[fieldName]) {
-      // Remove error if it was fixed
+      // إزالة الخطأ إذا تم إصلاحه
       setErrors(prev => {
         const newErrors = { ...prev };
         delete newErrors[fieldName];
@@ -104,38 +121,18 @@ const ProfilePage = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Use context profile data instead of fetching directly
-        if (contextProfile) {
-          setProfile(contextProfile);
-          setOriginalProfile({ ...contextProfile });
-          setAvatarPreview(contextProfile.profileImage);
-        }
-      } catch (err) {
-        console.error('Error fetching data:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (contextProfile) {
-      fetchData();
-    }
-  }, [contextProfile]);
-
+  // التحقق من النموذج كامل
   const validateForm = () => {
     const newErrors = {};
     
-    // Validate full name
+    // التحقق من الاسم الكامل
     if (!profile.fullName || profile.fullName.trim().length < 3) {
       newErrors.fullName = 'الاسم يجب أن يكون 3 أحرف على الأقل';
     } else if (profile.fullName.trim().length > 50) {
       newErrors.fullName = 'الاسم يجب ألا يتجاوز 50 حرفًا';
     }
     
-    // Validate email
+    // التحقق من البريد الإلكتروني
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!profile.email || !emailRegex.test(profile.email)) {
       newErrors.email = 'البريد الإلكتروني غير صالح';
@@ -143,13 +140,13 @@ const ProfilePage = () => {
       newErrors.email = 'البريد الإلكتروني طويل جدًا';
     }
     
-    // Validate phone
+    // التحقق من الهاتف
     const phoneRegex = /^[\+]?[0-9]{10,15}$/;
     if (!profile.phone || !phoneRegex.test(profile.phone)) {
       newErrors.phone = 'رقم الهاتف غير صالح (يجب أن يكون بين 10-15 رقمًا)';
     }
     
-    // Validate address
+    // التحقق من العنوان
     if (!profile.address) {
       newErrors.address = 'العنوان مطلوب';
     } else if (profile.address.length < 5) {
@@ -162,8 +159,9 @@ const ProfilePage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // حفظ التغييرات
   const handleSaveChanges = async () => {
-    // Validate all fields
+    // التحقق من جميع الحقول
     if (!validateForm()) {
       alert('يرجى تصحيح الأخطاء في النموذج قبل الحفظ');
       return;
@@ -171,100 +169,103 @@ const ProfilePage = () => {
     
     try {
       setUpdating(true);
-      setSuccessMessage(''); // Clear any previous success message
+      setSuccessMessage(''); // مسح أي رسالة نجاح سابقة
       
-      // Start with current profile data
+      // البدء ببيانات البروفايل الحالية
       let finalProfileData = { ...profile };
       
-      // Check if avatar has changed and needs to be uploaded
+      // التحقق إذا كانت الصورة قد تغيرت وتحتاج للرفع
       if (avatarPreview !== originalProfile.profileImage) {
-        // Upload avatar using context function
+        // رفع الصورة باستخدام دالة الكون텍ست
         const fileInput = fileInputRef.current;
         if (fileInput && fileInput.files[0]) {
           const formData = new FormData();
           formData.append('avatar', fileInput.files[0]);
           const avatarResponse = await updateAvatar(formData);
           
-          // Update the final profile data with the new avatar URL
+          // تحديث بيانات البروفايل النهائية برابط الصورة الجديد
           finalProfileData.profileImage = avatarResponse.profileImage;
         }
       }
       
-      // Update profile data using context function with the final profile data
+      // تحديث بيانات البروفايل باستخدام دالة الكون텍ست
       const updatedProfile = await updateProfile(finalProfileData);
       
-      // Update local state with returned data
+      // تحديث الحالة المحلية بالبيانات المرتجعة
       setOriginalProfile({ ...updatedProfile });
       setProfile(updatedProfile);
-      // Also update the avatar preview to match the saved avatar
+      // أيضاً تحديث معاينة الصورة لتطابق الصورة المحفوظة
       setAvatarPreview(updatedProfile.profileImage);
       
-      // Show success message
+      // عرض رسالة النجاح
       setSuccessMessage('تم حفظ التغييرات بنجاح');
-      // Clear success message after 3 seconds
+      // مسح رسالة النجاح بعد 3 ثوان
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err) {
       console.error('Error updating profile:', err);
-      // Show error message
+      // عرض رسالة الخطأ
       alert(err.message || 'حدث خطأ أثناء حفظ التغييرات');
     } finally {
       setUpdating(false);
     }
   };
 
+  // إلغاء التغييرات
   const handleCancel = () => {
-    // Reset to original profile data
+    // إعادة تعيين لبيانات البروفايل الأصلية
     setProfile({ ...originalProfile });
     setAvatarPreview(originalProfile.profileImage);
     setErrors({});
     setSuccessMessage('');
     
-    // Reset file input
+    // إعادة تعيين إدخال الملف
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   };
 
+  // التحقق من وجود تغييرات
   const hasChanges = () => {
     if (!profile || !originalProfile) return false;
     return JSON.stringify(profile) !== JSON.stringify(originalProfile) || 
            avatarPreview !== originalProfile.profileImage;
   };
 
+  // تغيير الصورة الشخصية
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
+      // التحقق من نوع الملف
       if (!file.type.startsWith('image/')) {
         setErrors(prev => ({ ...prev, avatar: 'يجب أن يكون الملف صورة' }));
         return;
       }
       
-      // Validate file size (5MB max)
+      // التحقق من حجم الملف (5MB كحد أقصى)
       if (file.size > 5 * 1024 * 1024) {
         setErrors(prev => ({ ...prev, avatar: 'حجم الصورة يجب أن لا يتجاوز 5 ميجابايت' }));
         return;
       }
       
-      // Validate image dimensions
+      // التحقق من أبعاد الصورة
       const img = new Image();
       const objectUrl = URL.createObjectURL(file);
       
       img.onload = () => {
-        // Clean up object URL
+        // تنظيف رابط الكائن
         URL.revokeObjectURL(objectUrl);
         
-        // Check minimum dimensions
+        // التحقق من الأبعاد الدنيا
         if (img.width < 100 || img.height < 100) {
           setErrors(prev => ({ ...prev, avatar: 'حجم الصورة صغير جدًا (يجب أن يكون على الأقل 100×100)' }));
           return;
         }
         
-        // Preview the image
+        // معاينة الصورة
         const reader = new FileReader();
         reader.onload = (e) => {
           setAvatarPreview(e.target.result);
-          // Clear avatar error if it exists
+          // مسح خطأ الصورة إذا كان موجوداً
           if (errors.avatar) {
             const newErrors = { ...errors };
             delete newErrors.avatar;
@@ -370,7 +371,7 @@ const ProfilePage = () => {
           </motion.div>
         )}
 
-        {/* Profile Header */}
+        {/* رأس البروفايل */}
         <motion.div 
           className="flex flex-col md:flex-row items-center mb-8 p-6 bg-white dark:bg-gray-700 rounded-lg justify-between"
           initial={{ opacity: 0, x: -20 }}
@@ -437,14 +438,14 @@ const ProfilePage = () => {
           </div>
         </motion.div>
 
-        {/* Profile Form */}
+        {/* نموذج البروفايل */}
         <motion.div 
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
         >
-          {/* Full Name */}
+          {/* الاسم الكامل */}
           <motion.div 
             className="bg-white dark:bg-gray-700 p-4 rounded-lg"
             initial={{ opacity: 0, y: 10 }}
@@ -476,7 +477,7 @@ const ProfilePage = () => {
             )}
           </motion.div>
 
-          {/* Email */}
+          {/* البريد الإلكتروني */}
           <motion.div 
             className="bg-white dark:bg-gray-700 p-4 rounded-lg"
             initial={{ opacity: 0, y: 10 }}
@@ -509,7 +510,7 @@ const ProfilePage = () => {
             )}
           </motion.div>
 
-          {/* Address */}
+          {/* العنوان */}
           <motion.div 
             className="bg-white dark:bg-gray-700 p-4 rounded-lg"
             initial={{ opacity: 0, y: 10 }}
@@ -541,7 +542,7 @@ const ProfilePage = () => {
             )}
           </motion.div>
 
-          {/* Phone */}
+          {/* الهاتف */}
           <motion.div 
             className="bg-white dark:bg-gray-700 p-4 rounded-lg"
             initial={{ opacity: 0, y: 10 }}

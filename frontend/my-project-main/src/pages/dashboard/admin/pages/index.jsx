@@ -6,52 +6,56 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
+import { AdminProvider } from '../contexts/AdminContext';
 import AdminDashboard from './AdminDashboard';
 import Dashboard from './Dashboard';
-import SchoolsPage from './SchoolsPage';
+import SchoolsManagement from './SchoolsManagement';
 import SchoolComparisonPage from './SchoolComparisonPage';
-import ComplaintsPage from './ComplaintsPage';
+import ComplaintsManagement from './ComplaintsManagement';
 import EvaluationsPage from './EvaluationsPage';
 import ProfilePage from './ProfilePage';
-import ChatPage from './ChatPage';
+// Removed ChatPage import as component doesn't exist
 import NotificationsPage from './NotificationsPage';
-import SettingsPage from './SettingsPage';
-import ReportsPage from './ReportsPage';
-import CalendarPage from './CalendarPage';
+import Settings from './Settings';
+import ReportsManagement from './ReportsManagement';
+// Removed CalendarPage import as component doesn't exist
 import TestNotifications from '../TestNotifications';
 import ResetData from '../ResetData';
 import TestSharedNotifications from '../TestSharedNotifications';
-import SupportPage from './SupportPage';
-import InvitationsPage from './InvitationsPage';
-import UsersPage from './UsersPage';
+import SupportTickets from './SupportTickets';
+import InvitationsManagement from './InvitationsManagement';
+
+import UsersManagement from './UsersManagement';
 
 const AdminDashboardRoutes = () => {
   return (
     <Layout>
-      <Routes>
-        <Route index element={<AdminDashboard />} />
-        <Route path="dashboard" element={<AdminDashboard />} />
-        <Route path="dashboard-old" element={<Dashboard />} />
-        <Route path="schools" element={<SchoolsPage />} />
-        <Route path="schools/comparison" element={<SchoolComparisonPage />} />
-        <Route path="complaints" element={<ComplaintsPage />} />
-        <Route path="evaluations" element={<EvaluationsPage />} />
-        <Route path="profile" element={<ProfilePage />} />
-        <Route path="chat" element={<ChatPage />} />
-        <Route path="notifications" element={<NotificationsPage />} />
-        <Route path="settings" element={<SettingsPage />} />
-        <Route path="reports" element={<ReportsPage />} />
-        <Route path="calendar" element={<CalendarPage />} />
-        <Route path="test-notifications" element={<TestNotifications />} />
-        <Route path="reset-data" element={<ResetData />} />
-        <Route path="test-shared-notifications" element={<TestSharedNotifications />} />
-        <Route path="SupportPage" element={<SupportPage />} />
-        <Route path="invitations" element={<InvitationsPage />} />
-        <Route path="users" element={<UsersPage />} />
-        
-        {/* Default route to admin dashboard */}
-        <Route path="*" element={<AdminDashboard />} />
-      </Routes>
+      <AdminProvider>
+        <Routes>
+          <Route index element={<AdminDashboard />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="dashboard-old" element={<Dashboard />} />
+          <Route path="schools" element={<SchoolsManagement />} />
+          <Route path="schools/comparison" element={<SchoolComparisonPage />} />
+          <Route path="complaints" element={<ComplaintsManagement />} />
+          <Route path="evaluations" element={<EvaluationsPage />} />
+          <Route path="profile" element={<ProfilePage />} />
+          {/* Removed ChatPage route as component doesn't exist */}
+          <Route path="notifications" element={<NotificationsPage />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="reports" element={<ReportsManagement />} />
+          {/* Removed CalendarPage route as component doesn't exist */}
+          <Route path="test-notifications" element={<TestNotifications />} />
+          <Route path="reset-data" element={<ResetData />} />
+          <Route path="test-shared-notifications" element={<TestSharedNotifications />} />
+          <Route path="SupportPage" element={<SupportTickets />} />
+          <Route path="invitations" element={<InvitationsManagement />} />
+          <Route path="users" element={<UsersManagement />} />
+          
+          {/* Default route to admin dashboard */}
+          <Route path="*" element={<AdminDashboard />} />
+        </Routes>
+      </AdminProvider>
     </Layout>
   );
 };

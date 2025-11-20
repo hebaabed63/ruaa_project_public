@@ -7,7 +7,7 @@ import {
 
 import { Card, Loading } from '../components/ui';
 // Updated imports to use admin hooks instead of parent hooks
-import { useAdminDashboardStats } from '../hooks/useAdminData';
+import { useAdminDashboardStats, useUsers } from '../hooks/useAdminData';
 import { useAdminContext } from '../contexts/AdminContext';
 // Import test component
 import TestAdminAPI from '../components/TestAdminAPI';
@@ -174,18 +174,13 @@ const AdminDashboard = () => {
   // Updated to use admin context instead of parent context
   const { profile } = useAdminContext();
   // Updated to use admin dashboard stats instead of parent stats
-  const { stats, loading: statsLoading } = useAdminDashboardStats();
+  const { stats, loading: statsLoading, error, refetch: refetchStats } = useAdminDashboardStats();
+  const { users: usersData, loading: usersLoading, refetch: refetchUsers } = useUsers({ limit: 5 });
 
   const [showModal, setShowModal] = useState(false);
   const [showTestAPI, setShowTestAPI] = useState(false);
 
-  // Mock recent registrations data - in a real app, this would come from the API
-  const recentRegistrations = [
-    { id: 1, name: "قاسم عبدالعال", email: "qw@gmail.com", role: "مدير", date: "July 1, 2024" },
-    { id: 2, name: "أحمد علي", email: "ahmed@gmail.com", role: "مشرف", date: "July 8, 2025" },
-    { id: 3, name: "سارة محمد", email: "sara@gmail.com", role: "مدير مدرسة", date: "July 15, 2025" },
-    { id: 4, name: "ليلى أحمد", email: "layla@gmail.com", role: "ولي أمر", date: "July 20, 2025" }
-  ];
+  // Removed mock data - now using real API data
 
   return (
     <motion.div 
@@ -230,6 +225,35 @@ const AdminDashboard = () => {
         </motion.button>
       </motion.div>
 
+      {/* Error handling */}
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg"
+        >
+          <div className="flex items-center justify-between">
+            <p className="text-red-700 dark:text-red-300">فشل في تحميل بيانات لوحة التحكم</p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => refetchStats()}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors mr-2"
+            >
+              إعادة المحاولة
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => refetchUsers()}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              تحديث المستخدمين
+            </motion.button>
+          </div>
+        </motion.div>
+      )}
+
       {/* Test API Component */}
       {showTestAPI && (
         <motion.div
@@ -251,33 +275,36 @@ const AdminDashboard = () => {
       >
         <StatsCard 
           title="إجمالي المستخدمين" 
-          value={statsLoading ? '...' : stats?.totalUsers || 0} 
-          suffix="طالب وطالبة" 
+          value={stats?.totalUsers || 0} 
+          suffix="مستخدم" 
           icon={FaUserFriends} 
           color="danger" 
           loading={statsLoading} 
         />
+
         <StatsCard 
           title="المستخدمون النشطون" 
-          value={statsLoading ? '...' : stats?.activeUsers || 0} 
-          suffix="مديريّة" 
+          value={stats?.activeUsers || 0} 
+          suffix="مستخدم" 
           icon={FaUserFriends} 
           color="success" 
           loading={statsLoading} 
         />
+
         <StatsCard 
-          title="عدد المدارس" 
-          value={statsLoading ? '...' : stats?.totalSchools || 0} 
-          suffix="مدرسة" 
-          icon={FaSchool} 
-          color="blue" 
+          title="المستخدمون المعلّقون" 
+          value={stats?.pendingUsers || 0} 
+          suffix="مستخدم" 
+          icon={FaUserFriends} 
+          color="warning" 
           loading={statsLoading} 
         />
+
         <StatsCard 
-          title="التقارير المعلقة" 
-          value={statsLoading ? '...' : stats?.pendingReports || 0} 
+          title="إجمالي التقارير" 
+          value={stats?.totalReports || 0} 
           suffix="تقرير" 
-          icon={FaUserFriends} 
+          icon={FaChartLine} 
           color="info" 
           loading={statsLoading} 
         />
@@ -336,25 +363,39 @@ const AdminDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {recentRegistrations.map((user, index) => (
-                <motion.tr 
-                  key={user.id}
-                  className="border-b border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.7 + index * 0.1 }}
-                  whileHover={{ scale: 1.01 }}
-                >
-                  <td className="py-3 px-6 text-right text-slate-950 dark:text-white">{user.name}</td>
-                  <td className="py-3 px-6 text-right text-gray-500 dark:text-white">{user.email}</td>
-                  <td className="py-3 px-6 text-right text-gray-500 dark:text-white">
-                    <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                      {user.role}
-                    </span>
+              {usersLoading ? (
+                <tr>
+                  <td colSpan="4" className="py-6 text-center text-gray-500 dark:text-gray-400">
+                    جاري تحميل البيانات...
                   </td>
-                  <td className="py-3 px-6 text-right text-gray-500 dark:text-white">{user.date}</td>
-                </motion.tr>
-              ))}
+                </tr>
+              ) : usersData?.length > 0 ? (
+                usersData.map((user, index) => (
+                  <motion.tr 
+                    key={user.id}
+                    className="border-b border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.7 + index * 0.1 }}
+                    whileHover={{ scale: 1.01 }}
+                  >
+                    <td className="py-3 px-6 text-right text-slate-950 dark:text-white">{user.name || user.fullName || 'غير محدد'}</td>
+                    <td className="py-3 px-6 text-right text-gray-500 dark:text-white">{user.email}</td>
+                    <td className="py-3 px-6 text-right text-gray-500 dark:text-white">
+                      <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                        {user.role === 'admin' ? 'مدير' : user.role === 'supervisor' ? 'مشرف' : user.role === 'school_manager' ? 'مدير مدرسة' : user.role === 'parent' ? 'ولي أمر' : user.role}
+                      </span>
+                    </td>
+                    <td className="py-3 px-6 text-right text-gray-500 dark:text-white">{new Date(user.created_at).toLocaleDateString('ar-SA')}</td>
+                  </motion.tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="py-6 text-center text-gray-500 dark:text-gray-400">
+                    لا توجد تسجيلات حديثة
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </motion.div>

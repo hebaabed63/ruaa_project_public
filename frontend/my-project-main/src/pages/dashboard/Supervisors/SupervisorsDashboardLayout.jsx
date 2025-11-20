@@ -19,6 +19,7 @@ import CalendarPage from './pages/CalendarPage';
 import TestSharedNotifications from './TestSharedNotifications';
 import InvitationsPage from "./pages/InvitationsPage";
 import TestSupervisorAPI from './TestSupervisorAPI';
+import PrincipalLinksManagementPage from './pages/PrincipalLinksManagementPage';
 
 const SupervisorsDashboardLayout = () => {
   return (
@@ -41,6 +42,7 @@ const SupervisorsDashboardLayout = () => {
         <Route path="reset-data" element={<ResetData />} />
         <Route path="test-shared-notifications" element={<TestSharedNotifications />} />
         <Route path="InvitationsPage" element={<InvitationsPage />} />
+        <Route path="principal-links" element={<PrincipalLinksManagementPage />} />
         <Route path="test-api" element={<TestSupervisorAPI />} />
 
         {/* Default route to dashboard */}

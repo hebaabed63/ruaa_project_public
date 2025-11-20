@@ -392,12 +392,19 @@ export default function Registration() {
                     // Wait a moment to show the spinner
                     await new Promise(resolve => setTimeout(resolve, 2000));
                     
-                    const successMessage = type === 'general' 
-                      ? "تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول"
-                      : `تم تسجيل ${currentConfig.title.replace('تسجيل ', '')} بنجاح! يمكنك الآن تسجيل الدخول`;
-                    
-                    // Navigate to login after showing spinner
-                    navigate("/login");
+                    // Check if the response includes a redirect URL
+                    if (response.data && response.data.redirect_url) {
+                      // Redirect to the check-email page
+                      window.location.href = response.data.redirect_url;
+                    } else {
+                      // Fallback to login page
+                      const successMessage = type === 'general' 
+                        ? "تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول"
+                        : `تم تسجيل ${currentConfig.title.replace('تسجيل ', '')} بنجاح! يمكنك الآن تسجيل الدخول`;
+                      
+                      // Navigate to login after showing spinner
+                      navigate("/login");
+                    }
                   } else {
                     throw new Error(response?.message || "حدث خطأ أثناء التسجيل");
                   }
@@ -535,7 +542,7 @@ export default function Registration() {
                   <button
                     type="submit"
                     disabled={btnState.disabled || isSubmitting}
-                    className={`w-full h-11 text-white text-base font-bold font-cairo rounded-full transition-all duration-300 ease-in-out mb-2 ${currentConfig.color} hover:opacity-90 ${btnState.className} flex items-center justify-center`} // Reduced from mb-3 to move form higher
+                    className={`w-full h-11 mt-2 bg-[#2ca1db] text-white text-lg font-bold font-cairo rounded-full hover:bg-[#C4E4F5] transition ${btnState.className} flex items-center justify-center`}
                   >
                     {isSubmitting ? (
                       <><ButtonSpinner size="sm" className="ml-2" />جاري إنشاء الحساب...</>

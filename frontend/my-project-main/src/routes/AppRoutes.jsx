@@ -43,6 +43,9 @@ import SupervisorsDashboard from "../pages/dashboard/Supervisors/pages/Superviso
 import SchoolComparisonPage from "../pages/dashboard/Supervisors/pages/SchoolComparisonPage";
 import ComplaintsPage from "../pages/dashboard/Supervisors/pages/ComplaintsPage";
 import ProfilePage from "../pages/dashboard/Supervisors/pages/ProfilePage";
+import UserProfilePage from "../pages/ProfilePage";
+import UserDashboard from "../pages/Dashboard";
+import EmailVerificationPage from "../pages/EmailVerification";
 import ChatPage from "../pages/dashboard/Supervisors/pages/ChatPage";
 import NotificationsPage from "../pages/dashboard/Supervisors/pages/NotificationsPage";
 import SettingsPage from "../pages/dashboard/Supervisors/pages/SettingsPage";
@@ -109,6 +112,9 @@ export default function AppRoutes() {
       {/* Test routes */}
       <Route path="/test-loading" element={<TestLoadingSpinner />} />
       <Route path="/test-loading-button" element={<TestLoadingButton />} />
+      <Route path="/profile" element={<UserProfilePage />} />
+      <Route path="/dashboard" element={<UserDashboard />} />
+      <Route path="/email-verification" element={<EmailVerificationPage />} />
 
       {/* Protected Dashboards */}
       <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["admin"]} userRole={userRole} />}>

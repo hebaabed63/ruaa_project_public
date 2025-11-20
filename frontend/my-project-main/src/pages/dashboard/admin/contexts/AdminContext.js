@@ -1,92 +1,126 @@
-// =============================================================================
-// Admin Context for Admin Dashboard
-// سياق الملف الشخصي للمدير لداشبورد المدير
-// =============================================================================
+// src/pages/dashboard/admin/contexts/AdminContext.js
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { fetchAdminProfile, updateAdminProfile, updateAdminProfileImage, changeAdminPassword } from '../services/adminApiService';
+// إنشاء خدمة محلية بديلة
+const adminService = {
+  getAdminProfile: async () => {
+    // محاكاة API call
+    return {
+      success: true,
+      data: {
+        id: 1,
+        fullName: 'مدير النظام',
+        email: 'admin@system.com',
+        phone: '+966501234567',
+        address: 'الرياض، المملكة العربية السعودية',
+        profileImage: null,
+        dateJoined: '2024-01-01',
+        status: 'active'
+      }
+    };
+  },
+  
+  updateAdminProfile: async (profileData) => {
+    // محاكاة تحديث البروفايل
+    return {
+      success: true,
+      data: profileData
+    };
+  },
+  
+  updateAdminAvatar: async (formData) => {
+    // محاكاة رفع الصورة
+    return {
+      success: true,
+      data: {
+        profileImage: 'https://via.placeholder.com/150'
+      }
+    };
+  }
+};
 
-// Create the context
-export const AdminContext = createContext(undefined);
+const AdminContext = createContext();
 
-/**
- * Admin Profile Provider Component
- * مكون مزود الملف الشخصي للمدير
- */
+export const useAdminContext = () => {
+  const context = useContext(AdminContext);
+  if (!context) {
+    throw new Error('useAdminContext must be used within an AdminProvider');
+  }
+  return context;
+};
+
 export const AdminProvider = ({ children }) => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch profile data
-  const fetchProfile = useCallback(async () => {
+  // جلب بيانات البروفايل
+  const fetchProfile = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await fetchAdminProfile();
-      setProfile(data);
+      const response = await adminService.getAdminProfile();
+      if (response.success) {
+        setProfile(response.data);
+      } else {
+        setError(response.message || 'فشل في جلب البيانات');
+      }
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'حدث خطأ في جلب البيانات');
       console.error('Error fetching admin profile:', err);
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
-  // Update profile data
-  const updateProfile = useCallback(async (profileData) => {
+  // تحديث بيانات البروفايل
+  const updateProfile = async (profileData) => {
     try {
-      const response = await updateAdminProfile(profileData);
-      setProfile(response);
-      return response;
+      setError(null);
+      const response = await adminService.updateAdminProfile(profileData);
+      if (response.success) {
+        setProfile(response.data);
+        return response.data;
+      } else {
+        throw new Error(response.message || 'فشل في تحديث البيانات');
+      }
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'حدث خطأ في تحديث البيانات');
       throw err;
     }
-  }, []);
+  };
 
-  // Update avatar
-  const updateAvatar = useCallback(async (formData) => {
+  // تحديث الصورة الشخصية
+  const updateAvatar = async (formData) => {
     try {
-      const response = await updateAdminProfileImage(formData);
-      setProfile(prev => ({
-        ...prev,
-        profileImage: response.profileImage
-      }));
-      return response;
+      setError(null);
+      const response = await adminService.updateAdminAvatar(formData);
+      if (response.success) {
+        setProfile(prev => ({
+          ...prev,
+          profileImage: response.data.profileImage
+        }));
+        return response.data;
+      } else {
+        throw new Error(response.message || 'فشل في تحديث الصورة');
+      }
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'حدث خطأ في تحديث الصورة');
       throw err;
     }
-  }, []);
+  };
 
-  // Change password
-  const changePassword = useCallback(async (passwordData) => {
-    try {
-      const response = await changeAdminPassword(passwordData);
-      // Refresh the profile after password change to ensure consistency
-      await fetchProfile();
-      return response;
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    }
-  }, [fetchProfile]);
-
-  // Initialize profile on mount
   useEffect(() => {
     fetchProfile();
-  }, [fetchProfile]);
+  }, []);
 
-  // Context value
   const value = {
     profile,
     loading,
     error,
-    fetchProfile,
     updateProfile,
     updateAvatar,
-    changePassword,
+    refreshProfile: fetchProfile
   };
 
   return (
@@ -94,16 +128,4 @@ export const AdminProvider = ({ children }) => {
       {children}
     </AdminContext.Provider>
   );
-};
-
-/**
- * Hook to use admin context
- * هوك لاستخدام سياق المدير
- */
-export const useAdminContext = () => {
-  const context = useContext(AdminContext);
-  if (context === undefined) {
-    throw new Error('useAdminContext must be used within an AdminProvider');
-  }
-  return context;
 };

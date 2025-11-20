@@ -256,7 +256,7 @@ export default function Login() {
                   <button
                     type="submit"
                     disabled={btnState.disabled || isSubmitting}
-                    className={`w-full h-11 mt-2 bg-primary text-white text-lg font-bold font-cairo rounded-full hover:bg-secondary transition ${btnState.className} flex items-center justify-center`}
+                    className={`w-full h-11 mt-2 bg-[#2ca1db] text-white text-lg font-bold font-cairo rounded-full hover:bg-[#C4E4F5] transition ${btnState.className} flex items-center justify-center`}
                   >
                     {isSubmitting ? (
                       <><ButtonSpinner size="sm" className="ml-2" />جاري تسجيل الدخول...</>

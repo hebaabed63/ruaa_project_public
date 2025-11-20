@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { FaPlus, FaEdit, FaTrash, FaSpinner, FaEye, FaSchool } from 'react-icons/fa';
-import { showAlert } from "../../utils/SweetAlert";
+import { showAlert } from "../../../../utils/SweetAlert";
 import { 
   getAllSchools,
   createSchool,
   updateSchool,
   deleteSchool
-} from "../../services/adminService";
+} from "../../../../services/adminService";
 
 export default function SchoolsManagement() {
   const [schools, setSchools] = useState([]);

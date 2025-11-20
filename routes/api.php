@@ -34,8 +34,12 @@ use App\Http\Controllers\Api\Supervisor\SupervisorPrincipalsController;
 use App\Http\Controllers\Api\Admin\AdminDashboardController;
 use App\Http\Controllers\Api\Admin\AdminSchoolsController;
 use App\Http\Controllers\Api\Admin\AdminReportsController;
-use App\Http\Controllers\Api\Admin\AdminInvitationsController;
+use App\Http\Controllers\Api\Admin\AdminLinksController;
 use App\Http\Controllers\Api\Admin\AdminProfileController;
+use App\Http\Controllers\Api\Admin\AdminSettingsController;
+use App\Http\Controllers\Api\Admin\AdminUsersController;
+use App\Http\Controllers\Api\Admin\AdminSupportController;
+use App\Http\Controllers\Api\Admin\AdminComplaintsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +52,15 @@ use App\Http\Controllers\Api\Admin\AdminProfileController;
 |
 */
 
+// Health check endpoint for frontend
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'timestamp' => now()->toISOString(),
+        'service' => 'ruaa-api'
+    ]);
+});
+
 // ============================================================================
 // Authentication Routes
 // ============================================================================
@@ -57,6 +70,10 @@ Route::prefix('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
     Route::post('/reset-password/{token}', [AuthController::class, 'resetPassword']);
+    
+    // Email verification routes
+    Route::get('/verify/{token}', [AuthController::class, 'verifyEmail']);
+    Route::get('/verify-supervisor/{token}', [AuthController::class, 'verifySupervisorEmail']);
 
     // Google OAuth routes
     Route::get('/google', [AuthController::class, 'redirectToGoogle']);
@@ -129,6 +146,15 @@ Route::prefix('ratings')->group(function () {
 Route::prefix('feedback')->group(function () {
     Route::post('/', [FeedbackController::class, 'store']);
     Route::get('/', [FeedbackController::class, 'index']);
+});
+
+// Public Invitation Routes - متاحة للجميع بدون تسجيل دخول
+Route::prefix('public')->group(function () {
+    // التحقق من صحة رابط الدعوة
+    Route::get('/invite/{token}', [AuthController::class, 'validateInvitation']);
+    
+    // التسجيل باستخدام رابط الدعوة
+    Route::post('/invite/{token}/register', [AuthController::class, 'registerWithInvitation']);
 });
 
 // ============================================================================
@@ -303,12 +329,17 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:0'])->group(function (
     
     // Dashboard - لوحة التحكم
     Route::get('/dashboard/stats', [AdminDashboardController::class, 'getDashboardStats']);
+    Route::get('/dashboard/recent-registrations', [AdminDashboardController::class, 'getRecentRegistrations']);
     
     // Profile - الملف الشخصي
     Route::get('/profile', [AdminProfileController::class, 'getAdminProfile']);
     Route::put('/profile', [AdminProfileController::class, 'updateAdminProfile']);
     Route::post('/profile/avatar', [AdminProfileController::class, 'updateAdminProfileImage']);
     Route::post('/profile/password', [AdminProfileController::class, 'changePassword']);
+    
+    // System Settings - إعدادات النظام
+    Route::get('/settings', [AdminSettingsController::class, 'getSystemSettings']);
+    Route::put('/settings', [AdminSettingsController::class, 'updateSystemSettings']);
     
     // Users - المستخدمين
     Route::get('/users', [AdminDashboardController::class, 'getUsers']);
@@ -324,17 +355,47 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:0'])->group(function (
     Route::delete('/schools/{schoolId}', [AdminSchoolsController::class, 'deleteSchool']);
     
     // Reports - التقارير
-    Route::get('/reports', [AdminReportsController::class, 'getReports']);
+    Route::get('/reports', [AdminReportsController::class, 'getReportsSummary']);
     Route::get('/reports/{reportId}', [AdminReportsController::class, 'getReportDetails']);
     Route::put('/reports/{reportId}/status', [AdminReportsController::class, 'updateReportStatus']);
     Route::delete('/reports/{reportId}', [AdminReportsController::class, 'deleteReport']);
     
-    // Invitations - الدعوات
-    Route::get('/invitations', [AdminInvitationsController::class, 'getInvitations']);
-    Route::get('/invitations/{invitationId}', [AdminInvitationsController::class, 'getInvitationDetails']);
-    Route::post('/invitations', [AdminInvitationsController::class, 'createInvitation']);
-    Route::put('/invitations/{invitationId}', [AdminInvitationsController::class, 'updateInvitation']);
-    Route::delete('/invitations/{invitationId}', [AdminInvitationsController::class, 'deleteInvitation']);
+    // Supervisor Links - روابط المشرفين
+    Route::get('/links', [AdminLinksController::class, 'getSupervisorLinks']);
+    Route::post('/links', [AdminLinksController::class, 'createSupervisorLink']);
+    Route::put('/links/{id}', [AdminLinksController::class, 'updateSupervisorLink']);
+    Route::delete('/links/{id}', [AdminLinksController::class, 'deleteSupervisorLink']);
+    Route::get('/links/statistics', [AdminLinksController::class, 'getSupervisorLinksStatistics']);
+    
+    // Support Tickets - تذاكر الدعم
+    Route::get('/support-tickets', [AdminSupportController::class, 'getAllSupportTickets']);
+    Route::get('/support-tickets/{ticketId}', [AdminSupportController::class, 'getSupportTicketById']);
+    Route::put('/support-tickets/{ticketId}/status', [AdminSupportController::class, 'updateSupportTicketStatus']);
+    Route::delete('/support-tickets/{ticketId}', [AdminSupportController::class, 'deleteSupportTicket']);
+    
+    // Complaints - الشكاوي
+    Route::get('/complaints', [AdminComplaintsController::class, 'getAllComplaints']);
+    Route::get('/complaints/{complaintId}', [AdminComplaintsController::class, 'getComplaintById']);
+    Route::put('/complaints/{complaintId}/status', [AdminComplaintsController::class, 'updateComplaintStatus']);
+    Route::delete('/complaints/{complaintId}', [AdminComplaintsController::class, 'deleteComplaint']);
+    
+    // User Management - إدارة المستخدمين
+    Route::get('/users/all', [AdminUsersController::class, 'getAllUsers']);
+    Route::get('/users/pending', [AdminUsersController::class, 'getPendingUsers']);
+    Route::post('/users/{userId}/approve', [AdminUsersController::class, 'approvePendingUser']);
+    Route::post('/users/{userId}/reject', [AdminUsersController::class, 'rejectPendingUser']);
+    
+    // Supervisor Management - إدارة المشرفين
+    Route::get('/supervisors/pending', [AdminUsersController::class, 'getPendingSupervisors']);
+    Route::post('/supervisors/{userId}/approve', [AdminUsersController::class, 'approveSupervisor']);
+    Route::post('/supervisors/{userId}/reject', [AdminUsersController::class, 'rejectSupervisor']);
+    
+    // Reports Statistics - إحصائيات التقارير
+    Route::get('/reports/schools', [AdminReportsController::class, 'getReportsSchools']);
+    Route::get('/reports/summary', [AdminReportsController::class, 'getReportsSummary']);
+    Route::get('/reports/comparison', [AdminReportsController::class, 'getReportsComparison']);
+    Route::post('/reports/export', [AdminReportsController::class, 'exportReport']);
+    Route::get('/reports/school/{schoolId}', [AdminReportsController::class, 'getSchoolReport']);
 });
 
 // ============================================================================

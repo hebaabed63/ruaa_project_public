@@ -35,6 +35,10 @@ class User extends Authenticatable
         'google_id',
         'avatar',
         'email_verified_at',
+        'verification_token',
+        'verification_token_expires_at',
+        'supervisor_verification_token',
+        'supervisor_verification_token_expires_at',
     ];
 
     /**

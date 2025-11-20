@@ -44,8 +44,16 @@ const UnifiedLinkManagement = ({
   const handleCreateLink = async (e) => {
     e.preventDefault();
     try {
+      // Validation for organization_name
+      if (!formData.organization_name || formData.organization_name.trim() === '') {
+        showAlert('error', 'اسم المؤسسة/المديرية مطلوب');
+        return;
+      }
+
       const cleanData = {
         ...formData,
+        link_type: linkType, // Add link_type to ensure it's set correctly
+        organization_name: formData.organization_name.trim(),
         expires_at: formData.expires_at || null,
         max_uses: formData.max_uses ? parseInt(formData.max_uses) : null
       };

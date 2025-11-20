@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,3 +27,19 @@ Route::get('/sanctum/csrf-cookie', function () {
 Route::get('/login', function () {
     return redirect('/');
 })->name('login');
+
+// Email verification route that redirects to frontend
+Route::get('/verify-email/{token}', [AuthController::class, 'verifyEmailAndRedirect']);
+
+// Supervisor email verification route that redirects to frontend
+Route::get('/verify-supervisor-email/{token}', [AuthController::class, 'verifySupervisorEmailAndRedirect']);
+
+// Check email page - shown after registration
+Route::get('/check-email', function () {
+    return view('check-email');
+});
+
+// Email verification page - shown when users click verification link
+Route::get('/email-verification', function () {
+    return view('email-verification');
+});

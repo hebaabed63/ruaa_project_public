@@ -43,13 +43,6 @@ const AdminDashboardWrapper = () => {
       onClick: () => setActiveTab('schools') 
     },
     { 
-      id: 'support', 
-      label: 'الدعم الفني', 
-      icon: FaHeadset, 
-      active: activeTab === 'support',
-      onClick: () => setActiveTab('support') 
-    },
-    { 
       id: 'reports', 
       label: 'التقارير', 
       icon: FaChartBar, 

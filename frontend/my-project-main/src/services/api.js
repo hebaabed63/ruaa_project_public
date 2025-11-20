@@ -4,7 +4,7 @@
  */
 
 // Base URL for the API - should be moved to environment variables in production
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '/api';
+const API_BASE_URL = (process.env.REACT_APP_API_URL || 'http://127.0.0.1:8000') + '/api';
 
 /**
  * Helper function to handle API responses
@@ -100,20 +100,24 @@ const apiService = {
    */
   async post(endpoint, data = {}, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
+    console.log('🔄 Making POST request to:', url);
+    console.log('📦 Request data:', data);
+    
     const response = await fetch(url, prepareOptions('POST', data, options));
+    console.log('📨 Response status:', response.status);
+    
     return handleResponse(response);
   },
 
   /**
    * Perform a PUT request
    * @param {string} endpoint - API endpoint (without base URL)
-   * @param {string|number} id - Resource ID
    * @param {Object} data - Request body data
    * @param {Object} options - Additional fetch options
    * @returns {Promise<*>} - The response data
    */
-  async put(endpoint, id, data = {}, options = {}) {
-    const url = `${API_BASE_URL}${endpoint}/${id}`;
+  async put(endpoint, data = {}, options = {}) {
+    const url = `${API_BASE_URL}${endpoint}`;
     const response = await fetch(url, prepareOptions('PUT', data, options));
     return handleResponse(response);
   },
@@ -135,12 +139,11 @@ const apiService = {
   /**
    * Perform a DELETE request
    * @param {string} endpoint - API endpoint (without base URL)
-   * @param {string|number} id - Resource ID to delete
    * @param {Object} options - Additional fetch options
    * @returns {Promise<*>} - The response data (usually empty)
    */
-  async delete(endpoint, id, options = {}) {
-    const url = `${API_BASE_URL}${endpoint}/${id}`;
+  async delete(endpoint, options = {}) {
+    const url = `${API_BASE_URL}${endpoint}`;
     const response = await fetch(url, prepareOptions('DELETE', null, options));
     return handleResponse(response);
   },

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   FaHome, FaSchool, FaComments, FaBell, FaUser, FaCog,
-  FaChevronLeft, FaChevronRight, FaBars,
+  FaChevronLeft, FaChevronRight, FaBars, FaLink,
   FaFileAlt, FaCalendarAlt, FaUserTie, FaStar, FaExclamationTriangle
 } from 'react-icons/fa';
 import Logo from '../../../../../assets/icons/LOGO.svg';
@@ -16,6 +16,7 @@ const navigationItems = [
   { id: 'calendar', label: 'التقويم', icon: FaCalendarAlt, path: '/dashboard/supervisor/calendar' },
   { id: 'complaints', label: 'الشكاوى', icon: FaExclamationTriangle, path: '/dashboard/supervisor/complaints' },
   { id: 'InvitationsPage', label: 'دعوات المدراء', icon: FaUserTie, path: '/dashboard/supervisor/InvitationsPage' },
+  { id: 'principal-links', label: 'روابط المدراء', icon: FaLink, path: '/dashboard/supervisor/principal-links' },
   { id: 'chat', label: 'المحادثة', icon: FaComments, path: '/dashboard/supervisor/chat' },
   { id: 'notifications', label: 'الإشعارات', icon: FaBell, path: '/dashboard/supervisor/notifications' },
 ];
